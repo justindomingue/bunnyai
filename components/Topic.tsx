@@ -36,8 +36,6 @@ const TopicContext = createContext<{
 export function Topic({ topic, onTurn }: { topic: Array<[string, string]>, onTurn: () => void }) {
     const [activeLevel, setActiveLevel] = useState(0)
 
-    console.log({ topic, activeLevel })
-
     const onDeeper = useCallback((newLevel: number) => setActiveLevel(newLevel), [])
 
     const [fade, setFade] = useState(false)
