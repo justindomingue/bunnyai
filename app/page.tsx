@@ -59,15 +59,18 @@ function Feed() {
 }
 
 function Profile() {
-  const {login} = usePrivy();
+  const {login, logout, authenticated} = usePrivy();
 
   return (
     <>
       <Head>
         <title>Login · Privy</title>
       </Head>
-
-      <Button onClick={login}>Login</Button>
+      {
+        !authenticated ? 
+          <Button onClick={login}>Login</Button>
+        : <Button onClick={logout}>Logout</Button>
+      }
     </>
   );
 
