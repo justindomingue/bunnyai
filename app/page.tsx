@@ -5,7 +5,7 @@ import { Topic } from "@/components/Topic";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 
-export const topics: Record<string, Array<[string, string]>> = {
+const topics: Record<string, Array<[string, string]>> = {
   "Happiness": [
     ["Happiness", "Happiness is like a burst of sunshine in your soul, lifting you up and making you do a little happy dance. Did you know that the sound of a baby laughing can instantly make your heart skip with joy? That's right, a simple giggle can have you feeling like you've won the happiness jackpot! So let those laughter lines show, because happiness is contagious and can spread faster than a contagious dance craze. Find your happy place, whether it's hugging your pet, singing in the shower, or eating ice cream for breakfast (no judgment here), and let that pure bliss wash over you like a bubbly rainbow.",],
     ["Psychology", "Somethingsomething"],
