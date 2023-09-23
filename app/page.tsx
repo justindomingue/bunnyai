@@ -1,5 +1,9 @@
-import { Topic } from "@/components/Topic"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Topic } from "@/components/Topic";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { usePrivy } from '@privy-io/react-auth';
+import Head from "next/head";
+"use client";
 
 export default function Home() {
   return (
@@ -8,10 +12,13 @@ export default function Home() {
         <TabsContent value="feed" className="flex-1">
           <Topic label="This is the topic" />
         </TabsContent>
-        <TabsContent value="profile">Change your password here.</TabsContent>
+        <TabsContent value="profile">
+          <Profile />
+        </TabsContent>
         <TabsList>
           <TabsTrigger value="feed">for you</TabsTrigger>
-          <TabsTrigger value="profile">profile</TabsTrigger>
+          <TabsTrigger value="profile">profile
+          </TabsTrigger>
         </TabsList>
       </Tabs>
     </main>
@@ -19,5 +26,19 @@ export default function Home() {
 }
 
 function Profile() {
+  const { login, logout, authenticated } = usePrivy();
+
+  return (
+    <>
+      <Head>
+        <title>Login · Privy</title>
+      </Head>
+      {
+        !authenticated ?
+          <Button onClick={login}>Login</Button>
+          : <Button onClick={logout}>Logout</Button>
+      }
+    </>
+  );
 
 }
