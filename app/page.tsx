@@ -3,7 +3,9 @@
 import { Profile } from "@/components/Profile"
 import { Topic } from "@/components/Topic"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState } from "react"
+import { useCompletion } from "ai/react"
+import { copyFile } from "fs"
+import { useEffect, useState } from "react"
 
 const topics: Record<string, Array<[string, string]>> = {
   Happiness: [
@@ -42,11 +44,11 @@ export default function Home() {
       <Tabs defaultValue="feed" className="flex flex-col flex-1 gap-8">
         <TabsContent value="feed" className="flex-1">
           <Topic
-            topic={topics[topic]}
+            initialTopic={topics[topic][0][0]}
             onTurn={() =>
               setTopic(
                 Object.keys(topics)[
-                  Object.keys(topics).findIndex((t) => t === topic) + 1
+                Object.keys(topics).findIndex((t) => t === topic) + 1
                 ]
               )
             }

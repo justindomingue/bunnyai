@@ -14,6 +14,7 @@ import {
   useEffect,
   useState,
 } from "react"
+import { useCompletion } from "ai/react"
 
 const carouselSettings = {
   dots: false,
@@ -35,23 +36,61 @@ const TopicContext = createContext<{
 }>({
   activeLevel: 0,
   topic: [],
-  onDeeper: () => {},
-  onTurn: () => {},
+  onDeeper: () => { },
+  onTurn: () => { },
 })
 
 export function Topic({
-  topic,
+  initialTopic,
   onTurn,
 }: {
-  topic: Array<[string, string]>
+  initialTopic: string
   onTurn: () => void
 }) {
   const [activeLevel, setActiveLevel] = useState(0)
-
   const onDeeper = useCallback(
     (newLevel: number) => setActiveLevel(newLevel),
     []
   )
+
+  const [topics, setTopics] = useState<string[]>([])
+  const [content, setContent] = useState<string[]>([])
+
+  // idea is to first get a next topic generated, and then trigger a content fetch.
+  // would probably be better to do direcly in the api? but idk how to convert
+  // the api response to a string
+  const { complete: completeNextTopic } = useCompletion({
+    api: '/api/nextTopic',
+    onFinish: (prompt, completion) => {
+      console.log({ prompt, completion })
+      setTopics(topics.slice().concat(completion))
+    }
+  })
+
+
+  const { complete } = useCompletion({
+    onFinish: (prompt, completion) => {
+      console.log({ prompt, completion })
+      setContent(content.slice().concat(completion))
+    },
+  })
+
+  useEffect(() => {
+    const topic = topics.at(-1) ?? initialTopic
+    completeNextTopic(topic)
+  }, [activeLevel])
+
+  useEffect(() => {
+
+  })
+
+  // triggers next completions fetching
+  useEffect(() => {
+    const nextTopic = content.at(-1)?.[0] ?? initialTopic
+
+    // whenever activeLevel changes, generate next prompts
+    complete(nextTopic)
+  }, [activeLevel])
 
   const [fade, setFade] = useState(false)
   useEffect(() => {
@@ -66,7 +105,7 @@ export function Topic({
   })
 
   return (
-    <TopicContext.Provider value={{ topic, activeLevel, onDeeper, onTurn }}>
+    <TopicContext.Provider value={{ completions: content, activeLevel, onDeeper, onTurn }}>
       <Slider
         {...carouselSettings}
         className="h-full"
@@ -74,15 +113,12 @@ export function Topic({
           setActiveLevel(level)
         }}
       >
-        <Section level={0} />
-        <Section level={1} />
-        <Section level={2} />
+        {content.map((t, i) => <Section key={i} level={i} />)}
       </Slider>
 
       <div
-        className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit  transition-all duration-300 ${
-          !fade ? "opacity-100" : "opacity-0"
-        }`}
+        className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit  transition-all duration-300 ${!fade ? "opacity-100" : "opacity-0"
+          }`}
       >
         {/* header */}
         <div className="flex flex-row justify-between">

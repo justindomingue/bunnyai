@@ -12,16 +12,14 @@ export const runtime = 'edge';
 export async function POST(req: Request) {
     const { prompt } = await req.json();
 
-    // Ask OpenAI for a streaming completion given the prompt
     const response = await openai.completions.create({
         model: 'text-davinci-003',
         stream: true,
         temperature: 0.6,
         max_tokens: 300,
-        prompt: `I want to learn and explore topics. I want to go down rabbit holes, expanding my knowledge about certain topics. Summarize ${prompt} in 3 short sentences. Your output should only contain 3 short sentences and nothing else.`,
+        prompt: `your next output must be a single word. I want to know more about ${prompt}. what should I explore?`,
     });
-    // Convert the response into a friendly text-stream
-    const stream = OpenAIStream(response);
+    const stream = OpenAIStream(response)
     // Respond with the stream
     return new StreamingTextResponse(stream);
 }
