@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import localFont from 'next/font/local'
 import Head from 'next/head'
+import { ComponentWrapper } from './wrapper';
 
 const lodrinaFont = localFont({
   src: './fonts/lodrina/LondrinaSolid-Regular.ttf',
@@ -26,7 +27,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${lodrinaFont.className}`}>{children}</body>
+      <Head>
+        
+      </Head>
+      <ComponentWrapper children={children} />
     </html>
   )
 }
