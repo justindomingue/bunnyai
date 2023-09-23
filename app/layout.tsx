@@ -9,7 +9,6 @@ const lodrinaFont = localFont({
   src: './fonts/lodrina/LondrinaSolid-Regular.ttf',
   display: 'swap',
 })
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'bunnyAI',
@@ -28,9 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Head>
-        
+
       </Head>
-      <ComponentWrapper children={children} />
+      <body className={`${lodrinaFont.className}`}>
+        <ComponentWrapper children={children} />
+      </body>
     </html>
   )
 }
