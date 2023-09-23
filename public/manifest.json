@@ -1,0 +1,27 @@
+{
+    "name": "bunnyAI",
+    "short_name": "bunnyAI",
+    "icons": [
+      {
+        "src": "/icons/android-launchericon-192-192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "/icons/android-launchericon-384-384.png",
+        "sizes": "384x384",
+        "type": "image/png"
+      },
+      {
+        "src": "/icons/android-launchericon-512-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "theme_color": "#FFEF16",
+    "background_color": "#000000",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait"
+  }
