@@ -22,7 +22,8 @@ export function ComponentWrapper({ children }: PropsWithChildren<{}>) {
                     logo: 'https://your-logo-url',
                 },
                 embeddedWallets: {
-                    createOnLogin: 'users-without-wallets'
+                    createOnLogin: 'users-without-wallets',
+                    noPromptOnSignature: true,
                 }
             }}
         >
