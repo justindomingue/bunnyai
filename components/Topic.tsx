@@ -43,8 +43,8 @@ export function Topic({ label, onTurn }: { label: string, onTurn: () => void }) 
 
     const [fade, setFade] = useState(false)
     useEffect(() => {
-        const fadein = () => setFade(true)
-        const fadeout = () => setFade(false)
+        const fadein = () => setFade(false)
+        const fadeout = () => setFade(true)
         window.addEventListener('touchstart', fadeout)
         window.addEventListener('touchend', fadein)
         return () => {
@@ -60,7 +60,7 @@ export function Topic({ label, onTurn }: { label: string, onTurn: () => void }) 
             <Section level={3} />
         </Slider>
 
-        <div className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit  transition-all duration-300 ${fade ? "opacity-100" : "opacity-0"}`}>
+        <div className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit  transition-all duration-300 ${!fade ? "opacity-100" : "opacity-0"}`}>
             {/* header */}
             <div className="flex flex-row justify-between">
                 <Noun />
