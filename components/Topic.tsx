@@ -7,7 +7,7 @@ import { darken } from 'polished'
 
 import { Noun } from "@/components/Noun"
 import { Button } from "@/components/ui/button"
-import { createContext, useCallback, useContext, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useState } from "react"
 
 const carouselSettings = {
     dots: false,
@@ -41,6 +41,18 @@ export function Topic({ label, onTurn }: { label: string, onTurn: () => void }) 
 
     const onDeeper = useCallback((newLevel: number) => setActiveLevel(newLevel), [])
 
+    const [fade, setFade] = useState(false)
+    useEffect(() => {
+        const fadein = () => setFade(true)
+        const fadeout = () => setFade(false)
+        window.addEventListener('touchstart', fadeout)
+        window.addEventListener('touchend', fadein)
+        return () => {
+            window.removeEventListener('touchstart', fadeout)
+            window.removeEventListener('touchend', fadein)
+        }
+    })
+
     return <TopicContext.Provider value={{ label, activeLevel, contentList, onDeeper, onTurn }}>
         <Slider {...carouselSettings} className='h-full' afterChange={(level) => { setActiveLevel(level) }}>
             <Section level={1} />
@@ -48,7 +60,7 @@ export function Topic({ label, onTurn }: { label: string, onTurn: () => void }) 
             <Section level={3} />
         </Slider>
 
-        <div className="justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit">
+        <div className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit  transition-all duration-500 ${fade ? "opacity-100" : "opacity-0"}`}>
             {/* header */}
             <div className="flex flex-row justify-between">
                 <Noun />
