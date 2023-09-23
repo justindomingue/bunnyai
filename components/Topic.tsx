@@ -48,26 +48,10 @@ export function Topic({
 }) {
   const [activeLevel, setActiveLevel] = useState(0)
 
-  const onDeeper = useCallback((newLevel: number) => {
-    setActiveLevel(newLevel)
-    const previousTopic = contentList.at(-1)?.[0] ?? label
-    debugger
-
-    complete(previousTopic)
-  }, [])
-
-  const { complete, completion, handleInputChange, handleSubmit } =
-    useCompletion()
-
-  useEffect(() => {
-    complete(label)
-  }, [label])
-
-  useEffect(() => {
-    console.log({ completion })
-
-    setContentList(contentList.slice().concat([completion, "123"]))
-  }, [completion])
+  const onDeeper = useCallback(
+    (newLevel: number) => setActiveLevel(newLevel),
+    []
+  )
 
   const [fade, setFade] = useState(false)
   useEffect(() => {
