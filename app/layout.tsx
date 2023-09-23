@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import localFont from 'next/font/local'
 import Head from 'next/head'
+import {PrivyProvider} from '@privy-io/react-auth';
 
 const lodrinaFont = localFont({
   src: './fonts/lodrina/LondrinaSolid-Regular.ttf',
@@ -19,6 +20,12 @@ export const metadata: Metadata = {
   themeColor: "#FFEF16",
 }
 
+// This method will be passed to the PrivyProvider as a callback
+// that runs after successful login.
+const handleLogin = (user: any) => {
+  console.log(`User ${user.id} logged in!`)
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -26,7 +33,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${lodrinaFont.className}`}>{children}</body>
+      <Head>
+        
+      </Head>
+      <PrivyProvider
+        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+        onSuccess={handleLogin}
+        config={{
+          loginMethods: ['email', 'wallet'],
+          appearance: {
+            theme: 'light',
+            accentColor: '#676FFF',
+            logo: 'https://your-logo-url',
+          },
+        }}
+      >
+        <body className={`${inter.className} ${lodrinaFont.className}`}>{children}</body>
+      </PrivyProvider>
     </html>
   )
 }
