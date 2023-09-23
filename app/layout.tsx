@@ -5,7 +5,7 @@ import localFont from 'next/font/local'
 import Head from 'next/head'
 
 const lodrinaFont = localFont({
-  src: '../fonts/lodrina/LondrinaSolid-Regular.ttf',
+  src: './fonts/lodrina/LondrinaSolid-Regular.ttf',
   display: 'swap',
 })
 const inter = Inter({ subsets: ['latin'] })
