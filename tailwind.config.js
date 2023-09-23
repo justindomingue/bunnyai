@@ -51,6 +51,9 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      fontFamily: {
+        sans: ['var(--font-lodrina)'],
+      },
       borderRadius: {
         "2xl": "calc(var(--radius) + 4px)",
         xl: "calc(var(--radius) + 2px)",
