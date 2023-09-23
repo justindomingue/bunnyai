@@ -1,3 +1,5 @@
+"use client";
+
 import { Profile } from "@/components/Profile";
 import { Topic } from "@/components/Topic";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
