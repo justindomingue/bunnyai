@@ -1,10 +1,8 @@
 "use client";
 
+import { Profile } from "@/components/Profile";
 import { Topic } from "@/components/Topic";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { usePrivy } from '@privy-io/react-auth';
-import Head from "next/head";
 
 export default function Home() {
   return (
@@ -26,22 +24,4 @@ export default function Home() {
       </Tabs>
     </main>
   )
-}
-
-function Profile() {
-  const { login, logout, authenticated } = usePrivy();
-
-  return (
-    <>
-      <Head>
-        <title>Login · Privy</title>
-      </Head>
-      {
-        !authenticated ?
-          <Button onClick={login}>Login</Button>
-          : <Button onClick={logout}>Logout</Button>
-      }
-    </>
-  );
-
 }
