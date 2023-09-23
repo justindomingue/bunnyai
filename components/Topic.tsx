@@ -7,7 +7,8 @@ import { darken } from 'polished'
 
 import { Noun } from "@/components/Noun"
 import { Button } from "@/components/ui/button"
-import { createContext, useCallback, useContext, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useState } from "react"
+import { useCompletion } from 'ai/react';
 
 const carouselSettings = {
     dots: false,
@@ -24,7 +25,7 @@ const carouselSettings = {
 const TopicContext = createContext<{
     label: string
     activeLevel: number
-    contentList: Array<string>
+    contentList: Array<[string, string]>
     onDeeper: (newLevel: number) => void
     onTurn: () => void
 }>({
@@ -36,16 +37,34 @@ const TopicContext = createContext<{
 })
 
 export function Topic({ label, onTurn }: { label: string, onTurn: () => void }) {
-    const [contentList, setContentList] = useState([])
+    const [contentList, setContentList] = useState<Array<[string, string]>>([])
     const [activeLevel, setActiveLevel] = useState(0)
 
-    const onDeeper = useCallback((newLevel: number) => setActiveLevel(newLevel), [])
+    const onDeeper = useCallback((newLevel: number) => {
+        setActiveLevel(newLevel)
+        const previousTopic = contentList.at(-1)?.[0] ?? label
+        debugger
+
+        complete(previousTopic)
+    }, [])
+
+    const { complete, completion, handleInputChange, handleSubmit } = useCompletion();
+
+    useEffect(() => {
+        complete(label)
+    }, [label])
+
+    useEffect(() => {
+        console.log({ completion })
+
+        setContentList(contentList.slice().concat([completion, '123']))
+    }, [completion])
 
     return <TopicContext.Provider value={{ label, activeLevel, contentList, onDeeper, onTurn }}>
-        <Slider {...carouselSettings} className='h-full' afterChange={(level) => { setActiveLevel(level) }}>
-            <Section level={1} />
-            <Section level={2} />
-            <Section level={3} />
+        <Slider {...carouselSettings} className='h-full' afterChange={onDeeper}>
+            <Section level={activeLevel - 1} />
+            <Section level={activeLevel} />
+            <Section level={activeLevel} />
         </Slider>
 
         <div className="justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit">

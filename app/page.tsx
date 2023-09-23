@@ -11,7 +11,7 @@ export default function Home() {
     <main className="flex min-h-screen min-w-screen flex-col items-center justify-between">
       <Tabs defaultValue="feed" className="flex flex-col flex-1 gap-8">
         <TabsContent value="feed" className="flex-1">
-          <Topic label="This is the topic" onTurn={function (): void {
+          <Topic label="Roman empire" onTurn={function (): void {
             throw new Error("Function not implemented.");
           }} />
         </TabsContent>
