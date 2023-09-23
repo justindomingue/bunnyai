@@ -4,7 +4,8 @@
  
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 55.9 100% 54.3%; /* #FFEF16 */
+    
     --foreground: 0 0% 3.9%;
 
     --card: 0 0% 100%;
@@ -32,7 +33,7 @@
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
  
-    --radius: 0.5rem;
+    --radius: 5rem;
   }
  
   .dark {
