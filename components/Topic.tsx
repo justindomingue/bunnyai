@@ -89,10 +89,13 @@ function Section({ level }: { level: number }) {
         </div>
 
         {/* actions */}
-        <div className="flex flex-row justify-between">
-            <Button onClick={() => onDeeper(level + 1)}>deeper</Button>
-            <Button onClick={onTurn}>turn</Button>
+        <div className="flex flex-row justify-between gap-2">
+            <Button className="w-1/2" variant="cta" onClick={() => onDeeper(level + 1)}>
+                👇 deeper
+            </Button>
+            <Button className="w-1/2" variant="cta2" onClick={onTurn}>
+                🤪 weirder
+            </Button>
         </div>
     </div>
-
 }
