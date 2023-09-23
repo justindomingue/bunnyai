@@ -8,8 +8,8 @@ import {
 export function Noun({ }: {}) {
     return (
         <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src="/noun1.png" alt="noun1" />
+            <AvatarFallback>N</AvatarFallback>
         </Avatar>
     );
 }
