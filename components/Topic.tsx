@@ -63,13 +63,13 @@ export function Topic({ label, onTurn }: { label: string, onTurn: () => void }) 
             </div>
         </div>
 
-        <div className='absolute inset-0'>
+        {/* <div className='absolute inset-0'>
             <Slider {...carouselSettings} className='h-full'>
                 <Section offset={-1} />
                 <Section offset={0} />
                 <Section offset={1} />
             </Slider>
-        </div>
+        </div> */}
 
     </TopicContext.Provider >
 }
