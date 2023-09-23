@@ -17,13 +17,14 @@ import {
 } from '@biconomy/paymaster'
 import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "@biconomy/modules";
 
+export let smartAccount: BiconomySmartAccountV2 | null = null;
+
 export function Profile() {
     const { ready, login, logout, authenticated, user } = usePrivy();
     const { wallets } = useWallets();
     const [wallet, setWallet] = useState<ConnectedWallet | undefined>(undefined);
     const [address, setAddress] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false);
-    const [smartAccount, setSmartAccount] = useState<BiconomySmartAccountV2 | null>(null);
     const [provider, setProvider] = useState<ethers.providers.Provider | null>(null)
 
     const bundler: IBundler = new Bundler({
@@ -123,7 +124,7 @@ export function Profile() {
                 moduleAddress: DEFAULT_ECDSA_OWNERSHIP_MODULE
             })
 
-            let biconomySmartAccount = await BiconomySmartAccountV2.create({
+            smartAccount = await BiconomySmartAccountV2.create({
                 chainId: ChainId.BASE_MAINNET,
                 bundler: bundler,
                 paymaster: paymaster,
@@ -131,9 +132,8 @@ export function Profile() {
                 defaultValidationModule: biconomyModule,
                 activeValidationModule: biconomyModule
             })
-            setAddress(await biconomySmartAccount.getAccountAddress())
-            setSmartAccount(biconomySmartAccount)
-            console.log("biconomySmartAccount", biconomySmartAccount)
+            setAddress(await smartAccount.getAccountAddress())
+            console.log("smartAccount", smartAccount)
             setLoading(false)
         } catch (error) {
             console.error(error);
