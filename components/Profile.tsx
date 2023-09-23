@@ -13,6 +13,18 @@ import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import Head from "next/head";
 import { useEffect, useState } from 'react';
+import { IBundler, Bundler } from '@biconomy/bundler'
+import { BiconomySmartAccountV2, DEFAULT_ENTRYPOINT_ADDRESS } from "@biconomy/account"
+import { ethers } from 'ethers'
+import { ChainId } from "@biconomy/core-types"
+import {
+    IPaymaster,
+    BiconomyPaymaster,
+    IHybridPaymaster,
+    SponsorUserOperationDto,
+    PaymasterMode,
+} from '@biconomy/paymaster'
+import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "@biconomy/modules";
 
 export function Profile() {
     const { ready, login, logout, authenticated, user } = usePrivy();
@@ -32,6 +44,76 @@ export function Profile() {
     const paymaster: IPaymaster = new BiconomyPaymaster({
         paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL!
     })
+
+    const sendUserOp = async () => {
+        if (!smartAccount || !provider) {
+            throw new Error("Provider not found")
+        }
+        const contractAddress = "0xB850aD09eC3816588Ca66C5ADf13D053cf0C9C56";
+        const contractABI = [
+            {
+                "inputs": [],
+                "name": "increment",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "number",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "newNumber",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "setNumber",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ];
+        const contract = new ethers.Contract(contractAddress, contractABI, provider);
+        const txn = await contract.populateTransaction.setNumber(1);
+        console.log(txn.data);
+        const userOp = await smartAccount.buildUserOp([{
+            to: contractAddress,
+            data: txn.data
+        }]);
+        console.log(userOp);
+        const biconomyPaymaster =
+            smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+        let paymasterServiceData: SponsorUserOperationDto = {
+            mode: PaymasterMode.SPONSORED,
+            smartAccountInfo: {
+                name: 'BICONOMY',
+                version: '2.0.0'
+            },
+        };
+        const paymasterAndDataResponse =
+            await biconomyPaymaster.getPaymasterAndData(
+                userOp,
+                paymasterServiceData
+            );
+
+        userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData;
+        const userOpResponse = await smartAccount.sendUserOp(userOp);
+        console.log("userOpHash", userOpResponse);
+        const { receipt } = await userOpResponse.wait(1);
+        console.log("txHash", receipt.transactionHash);
+    }
 
     const connect = async () => {
         try {
@@ -96,6 +178,7 @@ export function Profile() {
                     Biconomy Smart Account Address: {address}
                 </div>
             }
+            <Button onClick={sendUserOp} >Send user op</Button>
         </>
     );
 
