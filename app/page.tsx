@@ -1,9 +1,10 @@
+"use client";
+
 import { Topic } from "@/components/Topic";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePrivy } from '@privy-io/react-auth';
 import Head from "next/head";
-"use client";
 
 export default function Home() {
   return (
