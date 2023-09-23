@@ -69,7 +69,7 @@ export function Profile() {
 
     // call connect if ready and authenticated and user
     useEffect(() => {
-        if (ready && authenticated && user) {
+        if (user) {
             connect();
         }
     }, [user]);
