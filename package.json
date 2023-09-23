@@ -9,6 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@biconomy/account": "^3.1.0",
+    "@biconomy/bundler": "^3.1.0",
+    "@biconomy/common": "^3.1.0",
+    "@biconomy/core-types": "^3.1.0",
+    "@biconomy/particle-auth": "^3.1.0",
+    "@biconomy/paymaster": "^3.1.0",
     "@privy-io/react-auth": "^1.40.3",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-label": "^2.0.2",
@@ -22,6 +28,7 @@
     "clsx": "^2.0.0",
     "eslint": "8.50.0",
     "eslint-config-next": "13.5.2",
+    "ethers": "^5.7.2",
     "lucide-react": "^0.279.0",
     "next": "13.5.2",
     "next-pwa": "^5.6.0",
