@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth';
 import Head from "next/head";
 import { useEffect, useState } from 'react';
 import { IBundler, Bundler } from '@biconomy/bundler'
@@ -17,6 +17,7 @@ import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "
 export function Profile() {
     const { ready, login, logout, authenticated, user, getEthereumProvider } = usePrivy();
     const {wallets} = useWallets();
+    const [wallet, setWallet] = useState<ConnectedWallet | undefined>(undefined);
     const [address, setAddress] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false);
     const [smartAccount, setSmartAccount] = useState<BiconomySmartAccountV2 | null>(null);
@@ -38,17 +39,19 @@ export function Profile() {
             if (!embeddedWallet) {
                 throw new Error('Privy wallet not found');
             }
-            const provider = new ethers.providers.Web3Provider(await embeddedWallet.getEthereumProvider());
+            setWallet(embeddedWallet);
 
-            setProvider(provider)
+            const customProvider = new ethers.providers.Web3Provider(await embeddedWallet.getEthereumProvider());
+            setProvider(customProvider)
 
+            // set privy wallet as signer
             const module = await ECDSAOwnershipValidationModule.create({
-            signer: provider.getSigner(),
-            moduleAddress: DEFAULT_ECDSA_OWNERSHIP_MODULE
+                signer: customProvider.getSigner(),
+                moduleAddress: DEFAULT_ECDSA_OWNERSHIP_MODULE
             })
 
             let biconomySmartAccount = await BiconomySmartAccountV2.create({
-                chainId: ChainId.POLYGON_MUMBAI,
+                chainId: ChainId.BASE_MAINNET,
                 bundler: bundler, 
                 paymaster: paymaster,
                 entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
@@ -80,6 +83,12 @@ export function Profile() {
           !authenticated ?
             <Button onClick={login}>Login</Button>
             : <Button onClick={logout}>Logout</Button>
+        }
+        {
+            wallet && 
+                <div>
+                    Privy wallet Address: {wallet.address}
+                </div>
         }
         {
             smartAccount && 
