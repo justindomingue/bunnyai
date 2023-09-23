@@ -45,7 +45,7 @@ export function Profile() {
             setProvider(customProvider)
 
             // set privy wallet as signer
-            const module = await ECDSAOwnershipValidationModule.create({
+            const biconomyModule = await ECDSAOwnershipValidationModule.create({
                 signer: customProvider.getSigner(),
                 moduleAddress: DEFAULT_ECDSA_OWNERSHIP_MODULE
             })
@@ -55,8 +55,8 @@ export function Profile() {
                 bundler: bundler, 
                 paymaster: paymaster,
                 entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
-                defaultValidationModule: module,
-                activeValidationModule: module
+                defaultValidationModule: biconomyModule,
+                activeValidationModule: biconomyModule
             })
             setAddress( await biconomySmartAccount.getAccountAddress())
             setSmartAccount(biconomySmartAccount)
