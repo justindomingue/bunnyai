@@ -93,6 +93,7 @@ export function Profile() {
                 name: 'BICONOMY',
                 version: '2.0.0'
             },
+            calculateGasLimits: true
         };
         const paymasterAndDataResponse =
             await biconomyPaymaster.getPaymasterAndData(
@@ -125,7 +126,7 @@ export function Profile() {
             })
 
             smartAccount = await BiconomySmartAccountV2.create({
-                chainId: ChainId.BASE_MAINNET,
+                chainId: ChainId.BASE_GOERLI_TESTNET,
                 bundler: bundler,
                 paymaster: paymaster,
                 entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
