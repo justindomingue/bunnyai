@@ -1,6 +1,10 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Noun } from "@/components/Noun"
+import {usePrivy} from '@privy-io/react-auth';
+import Head from "next/head";
 
 export default function Home() {
   return (
@@ -9,10 +13,13 @@ export default function Home() {
         <TabsContent value="feed" className="flex-1">
           <Feed />
         </TabsContent>
-        <TabsContent value="profile">Change your password here.</TabsContent>
+        <TabsContent value="profile">
+          <Profile />
+        </TabsContent>
         <TabsList>
           <TabsTrigger value="feed">for you</TabsTrigger>
-          <TabsTrigger value="profile">profile</TabsTrigger>
+          <TabsTrigger value="profile">profile
+          </TabsTrigger>
         </TabsList>
       </Tabs>
     </main>
@@ -52,5 +59,16 @@ function Feed() {
 }
 
 function Profile() {
+  const {login} = usePrivy();
+
+  return (
+    <>
+      <Head>
+        <title>Login · Privy</title>
+      </Head>
+
+      <Button onClick={login}>Login</Button>
+    </>
+  );
 
 }
