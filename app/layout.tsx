@@ -30,7 +30,7 @@ export default function RootLayout({
 
       </Head>
       <body className={`${lodrinaFont.className}`}>
-        <ComponentWrapper children={children} />
+        <ComponentWrapper>{children}</ComponentWrapper>
       </body>
     </html>
   )
