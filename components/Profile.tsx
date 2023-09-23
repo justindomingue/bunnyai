@@ -15,7 +15,7 @@ import {
 import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "@biconomy/modules"; 
 
 export function Profile() {
-    const { ready, login, logout, authenticated, user, getEthereumProvider } = usePrivy();
+    const { ready, login, logout, authenticated, user } = usePrivy();
     const {wallets} = useWallets();
     const [wallet, setWallet] = useState<ConnectedWallet | undefined>(undefined);
     const [address, setAddress] = useState<string>("")
@@ -72,7 +72,7 @@ export function Profile() {
         if (ready && authenticated && user) {
             connect();
         }
-    }, [ready, authenticated, user]);
+    }, [user]);
   
     return (
       <>
