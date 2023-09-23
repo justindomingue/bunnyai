@@ -8,6 +8,7 @@ import { darken } from 'polished'
 import { Noun } from "@/components/Noun"
 import { Button } from "@/components/ui/button"
 import { createContext, useCallback, useContext, useState } from "react"
+import { Nounicon } from './ui/nounicon'
 
 const carouselSettings = {
     dots: false,
@@ -51,7 +52,7 @@ export function Topic({ label, onTurn }: { label: string, onTurn: () => void }) 
         <div className="justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit">
             {/* header */}
             <div className="flex flex-row justify-between">
-                <Noun />
+                <Nounicon prompt={label} />
                 <Button>420 $honk</Button>
             </div>
 
@@ -69,24 +70,25 @@ function Section({ level }: { level: number }) {
     const { contentList, activeLevel } = useContext(TopicContext)
     const backgroundColor = darken(level * 0.05, '#FFCD64')
 
-    return <div className='flex flex-col gap-4 px-8 h-screen w-screen' style={{ backgroundColor }}>
-        <div className="flex flex-col gap-4 font-bold mt-44">
-            <p className="text-lg">This is the body text about the rabbit hole.</p>
-            <p className="text-lg">This is the body text about the rabbit hole.</p>
-            <p className="text-lg">This is the body text about the rabbit hole.</p>
-            <p className="text-lg">This is the body text about the rabbit hole.</p>
-            <p className="text-lg">This is the body text about the rabbit hole.</p>
-            <p className="text-lg">This is the body text about the rabbit hole.</p>
-            <p className="text-lg">This is the body text about the rabbit hole.</p>
-            <p className="text-lg">This is the body text about the rabbit hole.</p>
+    return (
+        <div className='flex flex-col gap-4 px-8 h-screen w-screen' style={{ backgroundColor }}>
+            <div className="flex flex-col gap-4 font-bold mt-44">
+                <p className="text-lg">This is the body text about the rabbit hole.</p>
+                <p className="text-lg">This is the body text about the rabbit hole.</p>
+                <p className="text-lg">This is the body text about the rabbit hole.</p>
+                <p className="text-lg">This is the body text about the rabbit hole.</p>
+                <p className="text-lg">This is the body text about the rabbit hole.</p>
+                <p className="text-lg">This is the body text about the rabbit hole.</p>
+                <p className="text-lg">This is the body text about the rabbit hole.</p>
+                <p className="text-lg">This is the body text about the rabbit hole.</p>
 
+            </div>
+
+            {/* actions */}
+            <div className="flex flex-row justify-between">
+                <Button>deeper</Button>
+                <Button>turn</Button>
+            </div>
         </div>
-
-        {/* actions */}
-        <div className="flex flex-row justify-between">
-            <Button>deeper</Button>
-            <Button>turn</Button>
-        </div>
-    </div>
-
+    )
 }
