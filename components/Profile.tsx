@@ -1,16 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { BiconomySmartAccountV2, DEFAULT_ENTRYPOINT_ADDRESS } from "@biconomy/account";
-import { Bundler, IBundler } from '@biconomy/bundler';
-import { ChainId } from "@biconomy/core-types";
-import { DEFAULT_ECDSA_OWNERSHIP_MODULE, ECDSAOwnershipValidationModule } from "@biconomy/modules";
-import {
-    BiconomyPaymaster,
-    IPaymaster,
-} from '@biconomy/paymaster';
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth';
-import { ethers } from 'ethers';
 import Head from "next/head";
 import { useEffect, useState } from 'react';
 import { IBundler, Bundler } from '@biconomy/bundler'
