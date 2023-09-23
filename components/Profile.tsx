@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import Head from "next/head";
 import { useEffect, useState } from 'react';
 import { IBundler, Bundler } from '@biconomy/bundler'
@@ -16,24 +16,30 @@ import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "
 
 export function Profile() {
     const { ready, login, logout, authenticated, user, getEthereumProvider } = usePrivy();
+    const {wallets} = useWallets();
     const [address, setAddress] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false);
     const [smartAccount, setSmartAccount] = useState<BiconomySmartAccountV2 | null>(null);
     const [provider, setProvider] = useState<ethers.providers.Provider | null>(null)
 
     const bundler: IBundler = new Bundler({
-        bundlerUrl: "",    
+        bundlerUrl: process.env.NEXT_PUBLIC_BUNDLER_URL!,    
         chainId: ChainId.BASE_GOERLI_TESTNET,
         entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
     })
     
     const paymaster: IPaymaster = new BiconomyPaymaster({
-        paymasterUrl: ""
+        paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL!
     })
 
     const connect = async () => {
         try {
-            const provider = new ethers.providers.Web3Provider(getEthereumProvider(), "any")
+            const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === 'privy');
+            if (!embeddedWallet) {
+                throw new Error('Privy wallet not found');
+            }
+            const provider = new ethers.providers.Web3Provider(await embeddedWallet.getEthereumProvider());
+
             setProvider(provider)
 
             const module = await ECDSAOwnershipValidationModule.create({
@@ -51,18 +57,19 @@ export function Profile() {
             })
             setAddress( await biconomySmartAccount.getAccountAddress())
             setSmartAccount(biconomySmartAccount)
+            console.log("biconomySmartAccount", biconomySmartAccount)
             setLoading(false)
         } catch (error) {
             console.error(error);
         }
     };
 
-    // call connect if ready and authenticated
+    // call connect if ready and authenticated and user
     useEffect(() => {
-        if (ready && authenticated) {
+        if (ready && authenticated && user) {
             connect();
         }
-    }, [ready, authenticated]);
+    }, [ready, authenticated, user]);
   
     return (
       <>
@@ -73,6 +80,12 @@ export function Profile() {
           !authenticated ?
             <Button onClick={login}>Login</Button>
             : <Button onClick={logout}>Logout</Button>
+        }
+        {
+            smartAccount && 
+                <div>
+                    Biconomy Smart Account Address: {address}
+                </div>
         }
       </>
     );
