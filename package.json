@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "browser": {
+    "fs": false
+  },
   "dependencies": {
     "@biconomy/account": "^3.1.0",
     "@biconomy/bundler": "^3.1.0",
@@ -15,6 +18,8 @@
     "@biconomy/core-types": "^3.1.0",
     "@biconomy/particle-auth": "^3.1.0",
     "@biconomy/paymaster": "^3.1.0",
+    "@nouns/assets": "^0.5.0",
+    "@nouns/sdk": "^0.4.0",
     "@privy-io/react-auth": "^1.40.3",
     "@radix-ui/react-avatar": "^1.0.3",
     "@radix-ui/react-label": "^2.0.2",
@@ -37,6 +42,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-slick": "^0.29.0",
+    "seedrandom": "^3.0.5",
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",

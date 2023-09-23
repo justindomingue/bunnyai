@@ -7,6 +7,7 @@ import { darken } from 'polished'
 
 import { Noun } from "@/components/Noun"
 import { Button } from "@/components/ui/button"
+import { Nounicon } from './ui/nounicon'
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
 
 const carouselSettings = {
@@ -60,7 +61,7 @@ export function Topic({ topic, onTurn }: { topic: Array<[string, string]>, onTur
         <div className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit  transition-all duration-300 ${!fade ? "opacity-100" : "opacity-0"}`}>
             {/* header */}
             <div className="flex flex-row justify-between">
-                <Noun />
+                <Nounicon prompt={topic[0][0]} />
                 <Button>420 $honk</Button>
             </div>
 
