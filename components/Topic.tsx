@@ -7,133 +7,138 @@ import 'slick-carousel/slick/slick.css'
 
 import { Button } from '@/components/ui/button'
 import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
 } from 'react'
 import { NounImage } from './ui/NounImage'
 
 const carouselSettings = {
-  dots: false,
-  infinite: false,
-  speed: 500,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  arrows: false,
-  vertical: true,
-  verticalSwiping: true,
-  //   swipeToSlide: true,
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    vertical: true,
+    verticalSwiping: true,
+    //   swipeToSlide: true,
 }
 
 const TopicContext = createContext<{
-  activeLevel: number
-  topic: Array<[string, string]>
-  onDeeper: (newLevel: number) => void
-  onTurn: () => void
+    activeLevel: number
+    topic: Array<[string, string]>
+    onDeeper: (newLevel: number) => void
+    onTurn: () => void
 }>({
-  activeLevel: 0,
-  topic: [],
-  onDeeper: () => {},
-  onTurn: () => {},
+    activeLevel: 0,
+    topic: [],
+    onDeeper: () => { },
+    onTurn: () => { },
 })
 
 export function Topic({
-  topic,
-  onTurn,
+    topic,
+    onTurn,
 }: {
-  topic: Array<[string, string]>
-  onTurn: () => void
+    topic: Array<[string, string]>
+    onTurn: () => void
 }) {
-  const [activeLevel, setActiveLevel] = useState(0)
+    const [activeLevel, setActiveLevel] = useState(0)
 
-  const onDeeper = useCallback(
-    (newLevel: number) => setActiveLevel(newLevel),
-    []
-  )
+    const onDeeper = useCallback(
+        (newLevel: number) => setActiveLevel(newLevel),
+        []
+    )
 
-  const [fade, setFade] = useState(false)
-  useEffect(() => {
-    const fadein = () => setFade(false)
-    const fadeout = () => setFade(true)
-    window.addEventListener('touchstart', fadeout)
-    window.addEventListener('touchend', fadein)
-    return () => {
-      window.removeEventListener('touchstart', fadeout)
-      window.removeEventListener('touchend', fadein)
-    }
-  })
+    const [fade, setFade] = useState(false)
+    useEffect(() => {
+        const fadein = () => setFade(false)
+        const fadeout = () => setFade(true)
+        window.addEventListener('touchstart', fadeout)
+        window.addEventListener('touchend', fadein)
+        return () => {
+            window.removeEventListener('touchstart', fadeout)
+            window.removeEventListener('touchend', fadein)
+        }
+    })
 
-  return (
-    <TopicContext.Provider value={{ topic, activeLevel, onDeeper, onTurn }}>
-      <Slider
-        {...carouselSettings}
-        className="h-full"
-        afterChange={(level) => {
-          setActiveLevel(level)
-        }}
-      >
-        <Section level={0} />
-        <Section level={1} />
-        <Section level={2} />
-      </Slider>
+    const [honkBalance, setHonkBalance] = useState(420)
 
-      <div
-        className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300 ${
-          !fade ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        {/* header */}
-        <div className="flex flex-row justify-between">
-          <NounImage prompt={topic[0][0]} />
-          <Button>420 $honk</Button>
-        </div>
+    return (
+        <TopicContext.Provider value={{ topic, activeLevel, onDeeper, onTurn }}>
+            <Slider
+                {...carouselSettings}
+                className="h-full"
+                afterChange={(level) => {
+                    setActiveLevel(level)
+                }}
+            >
+                <Section level={0} />
+                <Section level={1} />
+                <Section level={2} />
+            </Slider>
 
-        {/* topic */}
-        <div className="flex flex-col gap-1">
-          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            {topic[activeLevel][0]}
-          </h1>
-          <p className="text-md text-muted-foreground">Level {activeLevel}</p>
-        </div>
-      </div>
-    </TopicContext.Provider>
-  )
+            <div
+                className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300 ${!fade ? 'opacity-100' : 'opacity-0'
+                    }`}
+            >
+                {/* header */}
+                <div className="flex flex-row justify-between">
+                    <NounImage prompt={topic[0][0]} />
+                    <div className='bg-black rounded-full flex items-center justify-center px-4 py-2'>
+                        <span className='text-white text-xl'>
+                            {honkBalance} $honk
+                        </span>
+                    </div>
+                </div>
+
+                {/* topic */}
+                <div className="flex flex-col gap-1">
+                    <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+                        {topic[activeLevel][0]}
+                    </h1>
+                    <p className="text-md text-muted-foreground">Level {activeLevel}</p>
+                </div>
+            </div>
+        </TopicContext.Provider>
+    )
 }
 
 function Section({ level }: { level: number }) {
-  const { topic, onDeeper, onTurn } = useContext(TopicContext)
-  const backgroundColor = darken(level * 0.05, '#FFCD64')
+    const { topic, onDeeper, onTurn } = useContext(TopicContext)
+    const backgroundColor = darken(level * 0.05, '#FFCD64')
 
-  if (!topic[level]) return null
+    if (!topic[level]) return null
 
-  return (
-    <div
-      className="flex flex-col gap-4 px-8 h-screen w-screen"
-      style={{ backgroundColor }}
-    >
-      <div className="flex flex-col gap-4 font-bold mt-44">
-        {topic[level][1].split('.').map((t, i) => (
-          <p key={i} className="text-lg">
-            {t}
-          </p>
-        ))}
-      </div>
-
-      {/* actions */}
-      <div className="flex flex-row justify-between gap-2">
-        <Button
-          className="w-1/2"
-          variant="cta"
-          onClick={() => onDeeper(level + 1)}
+    return (
+        <div
+            className="flex flex-col gap-4 px-8 h-screen w-screen"
+            style={{ backgroundColor }}
         >
-          👇 deeper
-        </Button>
-        <Button className="w-1/2" variant="cta2" onClick={onTurn}>
-          🤪 weirder
-        </Button>
-      </div>
-    </div>
-  )
+            <div className="flex flex-col gap-4 font-bold mt-44">
+                {topic[level][1].split('.').map((t, i) => (
+                    <p key={i} className="text-lg">
+                        {t}
+                    </p>
+                ))}
+            </div>
+
+            {/* actions */}
+            <div className="flex flex-row justify-between gap-2">
+                <Button
+                    className="w-1/2"
+                    variant="cta"
+                    onClick={() => onDeeper(level + 1)}
+                >
+                    👇 deeper
+                </Button>
+                <Button className="w-1/2" variant="cta2" onClick={onTurn}>
+                    🤪 weirder
+                </Button>
+            </div>
+        </div>
+    )
 }
