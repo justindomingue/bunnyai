@@ -1,5 +1,7 @@
 "use client"
 
+import { Airdrop } from "@/components/Airdrop"
+import { OnboardingLogin } from "@/components/OnboardingLogin"
 import { Profile } from "@/components/Profile"
 import { Topic } from "@/components/Topic"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -56,18 +58,16 @@ export default function Home() {
           <Profile />
         </TabsContent>
         <TabsContent value="airdrop">
-          <div className="flex flex-col gap-4 m-6 items-center">
-            <h1 className="text-2xl font-bold">Airdrop 🪂</h1>
-            <p className="text-md text-muted-foreground">
-              get rewarded for $honk $honk
-            </p>
-            <p className="text-md text-muted-foreground">coming soon™️</p>
-          </div>
+          <Airdrop />
+        </TabsContent>
+        <TabsContent value="onboarding">
+          <OnboardingLogin />
         </TabsContent>
         <TabsList className="absolute bottom-8">
           <TabsTrigger value="feed">for you</TabsTrigger>
           <TabsTrigger value="profile">profile </TabsTrigger>
           <TabsTrigger value="airdrop">airdrop</TabsTrigger>
+          <TabsTrigger value="onboarding">onboarding (TEMP)</TabsTrigger>
         </TabsList>
       </Tabs>
     </main>
