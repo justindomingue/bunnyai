@@ -195,7 +195,7 @@ export function Profile({
             verify with WorldID for 100 bonus free $honk
           </h3>
           <IDKitWidget
-            app_id={process.env.WORLDCOIN_APP_ID!} // obtained from the Developer Portal
+            app_id={process.env.NEXT_PUBLIC_WORLDCOIN_APP_ID!} // obtained from the Developer Portal
             action="claim-dollarhonk-0" // this is your action name from the Developer Portal
             onSuccess={() => {
               console.log('USER HAS ORB SCANNED! GIVE THEM FREE $honk!!')
