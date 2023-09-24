@@ -23,7 +23,7 @@ export function OnboardingLogin({}: {}) {
     >
       {/* header */}
       <div className="flex flex-row justify-between">
-        <NounImage isLogo />
+        <NounImage isLogo size={100} />
       </div>
 
       {/* body */}

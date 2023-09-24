@@ -2,7 +2,7 @@ import { ImageData, getNounData } from '@nouns/assets'
 import { buildSVG } from '@nouns/sdk'
 import seedrandom from 'seedrandom'
 
-const NounImage = ({ isLogo = false, prompt = 'happiness', size = 100 }) => {
+const NounImage = ({ isLogo = false, prompt = 'happiness', size = 60 }) => {
   const {
     palette,
     // images
