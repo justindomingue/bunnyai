@@ -20,7 +20,6 @@ import { BiconomyPaymaster, IPaymaster } from '@biconomy/paymaster'
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
-import { AppContext } from './AppContext'
 
 const topics: Record<string, Array<[string, string]>> = {
   Happiness: [
@@ -155,35 +154,32 @@ export default function Home() {
   }
 
   return (
-    <AppContext.Provider value={{ provider, smartAccount, connectedWallet }}>
-      <main className="flex min-h-screen min-w-screen flex-col items-center justify-between">
-        <Tabs defaultValue="feed" className="flex flex-col flex-1 gap-8">
-          <TabsContent value="feed" className="flex-1">
-            <Topic
-              topic={topics[topic]}
-              onTurn={() =>
-                setTopic(
-                  Object.keys(topics)[
-                    Object.keys(topics).findIndex((t) => t === topic) + 1
-                  ]
-                )
-              }
-            />
-          </TabsContent>
-          <TabsContent value="profile">
-            <Profile />
-          </TabsContent>
-          <TabsContent value="airdrop">
-            <Airdrop />
-          </TabsContent>
-          <TabsList className="absolute bottom-8">
-            <TabsTrigger value="feed">for you</TabsTrigger>
-            <TabsTrigger value="profile">profile </TabsTrigger>
-            <TabsTrigger value="airdrop">airdrop</TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </main>
-      ={' '}
-    </AppContext.Provider>
+    <main className="flex min-h-screen min-w-screen flex-col items-center justify-between">
+      <Tabs defaultValue="feed" className="flex flex-col flex-1 gap-8">
+        <TabsContent value="feed" className="flex-1">
+          <Topic
+            topic={topics[topic]}
+            onTurn={() =>
+              setTopic(
+                Object.keys(topics)[
+                  Object.keys(topics).findIndex((t) => t === topic) + 1
+                ]
+              )
+            }
+          />
+        </TabsContent>
+        <TabsContent value="profile">
+          <Profile />
+        </TabsContent>
+        <TabsContent value="airdrop">
+          <Airdrop />
+        </TabsContent>
+        <TabsList className="absolute bottom-8">
+          <TabsTrigger value="feed">for you</TabsTrigger>
+          <TabsTrigger value="profile">profile </TabsTrigger>
+          <TabsTrigger value="airdrop">airdrop</TabsTrigger>
+        </TabsList>
+      </Tabs>
+    </main>
   )
 }
