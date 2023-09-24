@@ -1,3 +1,25 @@
+# BunnyAI
+
+down rabbit holes like you've never seen before
+
+## Getting Started
+
+Add API keys in .env.example.
+
+```bash
+npm install
+npm run dev
+```
+
+## Stack
+
+- Privy for embedded wallet via SMS verification
+- Biconomy 4337 SDK for sponsored txns and user ops to send $honk
+- $honk on Base Mainnet: `0x981C5b436121C75cf043A622d078988248Ef203d`
+- OpenAI gpt3.5 for LLM
+
+# Next JS boilerplate
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
