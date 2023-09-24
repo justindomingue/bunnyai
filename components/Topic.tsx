@@ -352,7 +352,6 @@ export function Topic({
       },
       onError: (e) => console.error(e),
       onFinish: (m) => {
-        console.log({ m })
         // sliderRef.current?.slickNext()
       },
     })
@@ -401,8 +400,6 @@ export function Topic({
   })
 
   if (!topics || !topics.length) return 'Loading...'
-
-  // console.log({ topics })
 
   return (
     <TopicContext.Provider value={{ topics, onDeeper, onTurn, onWeirder }}>
