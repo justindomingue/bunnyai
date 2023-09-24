@@ -4,7 +4,9 @@ import { Airdrop } from '@/components/Airdrop'
 import { OnboardingLogin } from '@/components/OnboardingLogin'
 import { Profile } from '@/components/Profile'
 import { Topic } from '@/components/Topic'
+import { NounImage } from '@/components/ui/NounImage'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { usePrivy } from '@privy-io/react-auth'
 import { useState } from 'react'
 
 const topics: Record<string, Array<[string, string]>> = {
@@ -38,6 +40,34 @@ const topics: Record<string, Array<[string, string]>> = {
 
 export default function Home() {
   const [topic, setTopic] = useState(Object.keys(topics)[0])
+
+  const { authenticated, ready } = usePrivy()
+
+  if (!ready) {
+    return (
+      <main className="flex min-h-screen min-w-screen flex-col items-center justify-center gap-5">
+        <div className="flex flex-row justify-between">
+          <NounImage />
+        </div>
+
+        {/* body */}
+        <div className="flex flex-col gap-2 items-center">
+          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-foreground">
+            loading...
+          </h1>
+          <p className="text-lg ">$honk $honk</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (!authenticated) {
+    return (
+      <main className="flex min-h-screen min-w-screen flex-col items-center justify-between">
+        <OnboardingLogin />
+      </main>
+    )
+  }
 
   return (
     <main className="flex min-h-screen min-w-screen flex-col items-center justify-between">
