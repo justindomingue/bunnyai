@@ -4,7 +4,7 @@ import Image from 'next/image'
 import seedrandom from 'seedrandom'
 import { Avatar } from './avatar'
 
-const NounIcon = ({ prompt = 'happiness', size = 100 }) => {
+const NounImage = ({ prompt = 'happiness', size = 100 }) => {
   const {
     palette,
     // images
@@ -38,7 +38,7 @@ const NounIcon = ({ prompt = 'happiness', size = 100 }) => {
     <Avatar>
       <Image
         src={`data:image/svg+xml;base64,${svgBase64}`}
-        alt={`${prompt} nounicon`}
+        alt={`${prompt} noun`}
         width={size}
         height={size}
       />
@@ -46,4 +46,4 @@ const NounIcon = ({ prompt = 'happiness', size = 100 }) => {
   )
 }
 
-export { NounIcon }
+export { NounImage }

@@ -18,7 +18,7 @@ import { BiconomyPaymaster, IPaymaster } from '@biconomy/paymaster'
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
 import { useState } from 'react'
-import { NounIcon } from './ui/NounIcon'
+import { NounImage } from './ui/NounImage'
 
 export let smartAccount: BiconomySmartAccountV2 | null = null
 
@@ -89,7 +89,7 @@ export function OnboardingLogin({}: {}) {
     >
       {/* header */}
       <div className="flex flex-row justify-between">
-        <NounIcon prompt={'TODO_DEFAULT'} />
+        <NounImage prompt={'TODO_DEFAULT'} />
       </div>
 
       {/* body */}
