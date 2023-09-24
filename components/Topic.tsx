@@ -18,6 +18,7 @@ import {
 } from 'react'
 import { NounIcon } from '@/components/ui/NounIcon'
 import { fake_messages } from '@/components/fake-messages'
+import { getRandomEmoji } from '@/lib/emoji'
 
 const INITIAL_PROMPT = `You are a consumer application created by some of the top engineers and designers in the world. Your output is factual, engaging, fun, and entertaining to read. It's concise, but keeps the reader hooked.
 
@@ -49,6 +50,29 @@ const carouselSettings = {
   //   swipeToSlide: true,
 }
 
+export function Topics() {
+  // Should probably live somewhere else..
+  // we generate a random set of emojis to seed the ai
+  const [emojis, setEmojis] = useState<string[]>([])
+  useEffect(() => {
+    setEmojis([getRandomEmoji(), getRandomEmoji(), getRandomEmoji(), getRandomEmoji(), getRandomEmoji(), getRandomEmoji()])
+  }, [])
+
+  const [topic, setTopic] = useState<string | null>()
+  /* should probably use nest router */
+  return topic ?
+    <Topic
+      topic={topic}
+      onTurn={() =>
+        setTopic(null)
+      }
+    />
+    :
+    <div className="grid gap-5" style={{ gridAutoFlow: 'column', gridTemplateRows: '100px 100px', gridTemplateColumns: '100px 100px' }}>
+      {emojis.map((e, i) => <button key={i} className='flex-1 aspect-square  rounded-full bg-black grid items-center text-4xl text-center' onClick={() => setTopic(e)}>{e}</button>)}
+    </div>
+}
+
 const TopicContext = createContext<{
   topics: Message[]
   onDeeper: () => void
@@ -68,6 +92,7 @@ export function Topic({
   topic: string
   onTurn: () => void
 }) {
+  useEffect(() => { debugger }, [topic])
   const sliderRef = useRef()
 
   // const messages = fake_messages
