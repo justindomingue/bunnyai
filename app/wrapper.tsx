@@ -15,12 +15,6 @@ export function ComponentWrapper({ children }: PropsWithChildren<{}>) {
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       onSuccess={handleLogin}
       config={{
-        loginMethods: ['email', 'wallet'],
-        appearance: {
-          theme: 'light',
-          accentColor: '#676FFF',
-          logo: 'https://your-logo-url',
-        },
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',
           noPromptOnSignature: true,
