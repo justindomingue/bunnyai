@@ -21,19 +21,19 @@ const NounImage = ({ isLogo = false, prompt = 'happiness', size = 60 }) => {
 
   const seed = isLogo
     ? {
-        background: 1,
-        body: 28, // slimegreen
-        accessory: 24, // carrot
-        head: 169, // rabbit head
-        glasses: 20, // yellow
-      }
+      background: 1,
+      body: 28, // slimegreen
+      accessory: 24, // carrot
+      head: 169, // rabbit head
+      glasses: 20, // yellow
+    }
     : {
-        background: Math.floor(rng() * 2),
-        body: Math.floor(rng() * 30),
-        accessory: Math.floor(rng() * 142),
-        head: 169, // rabbit head
-        glasses: Math.floor(rng() * 23),
-      }
+      background: Math.floor(rng() * 2),
+      body: Math.floor(rng() * 30),
+      accessory: Math.floor(rng() * 142),
+      head: 169, // rabbit head
+      glasses: Math.floor(rng() * 23),
+    }
 
   const { parts, background } = getNounData(seed)
 
