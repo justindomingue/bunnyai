@@ -221,23 +221,34 @@ export function Profile({
 
         <div className="flex flex-col px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50">
           <h3 className="text-2xl text-white">buy $honk on uniswap (base)</h3>
-          <Button
-            onClick={() => {
-              // copy to clipboard
-              navigator.clipboard
-                .writeText('0x981c5b436121c75cf043a622d078988248ef203d')
-                .then(() => {
-                  console.log('Text copied to clipboard')
-                })
-                .catch((error) => {
-                  console.error('Failed to copy text to clipboard:', error)
-                })
-            }}
-          >
-            <p className="text-sm">
-              0x981c5b436121c75cf043a622d078988248ef203d
-            </p>
-          </Button>
+          <div className="flex flex-col ">
+            <Button
+              onClick={() => {
+                // open uniswap
+                window.open(
+                  `https://app.uniswap.org/swap?outputCurrency=0x981c5b436121c75cf043a622d078988248ef203d&chain=base`
+                )
+              }}
+            >
+              <p className="text-md">Swap on Uniswap</p>
+            </Button>
+            <Button
+              className="bg-transparent"
+              onClick={() => {
+                // copy to clipboard
+                navigator.clipboard
+                  .writeText('0x981c5b436121c75cf043a622d078988248ef203d')
+                  .then(() => {
+                    console.log('Text copied to clipboard')
+                  })
+                  .catch((error) => {
+                    console.error('Failed to copy text to clipboard:', error)
+                  })
+              }}
+            >
+              <p className="text-sm">copy token address</p>
+            </Button>
+          </div>
         </div>
 
         <div className="flex flex-col px-6 gap-3">
