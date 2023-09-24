@@ -28,7 +28,7 @@ import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import { NounImage } from './ui/NounImage'
 
-export let smartAccount: BiconomySmartAccountV2 | null = null
+let smartAccount: BiconomySmartAccountV2 | null = null
 
 export function Profile() {
   const { logout, user } = usePrivy()
@@ -155,14 +155,14 @@ export function Profile() {
           <Button
             className="w-1/2 bg-green-400"
             variant="cta"
-            onClick={() => { }}
+            onClick={() => {}}
           >
             get $honk
           </Button>
           <Button
             className="w-1/2 bg-slate-500"
             variant="cta2"
-            onClick={() => { }}
+            onClick={() => {}}
           >
             420 $honk
           </Button>
@@ -173,7 +173,7 @@ export function Profile() {
         <div className="flex flex-col px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50">
           <h3 className="text-2xl text-white">claim 10 free $honk</h3>
           <Button
-            className='bg-yellow-300 hover:bg-yellow-400 text-black'
+            className="bg-yellow-300 hover:bg-yellow-400 text-black"
             onClick={() => {
               // TODO: ADD CLAIM 10 $HONK!!!
             }}

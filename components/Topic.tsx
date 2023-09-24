@@ -1,12 +1,37 @@
 'use client'
 
+import { Message, useChat } from 'ai/react'
 import { darken } from 'polished'
-import Slider from 'react-slick'
 import 'slick-carousel/slick/slick-theme.css'
 import 'slick-carousel/slick/slick.css'
-import { useChat, Message } from 'ai/react';
 
+import { NounImage } from '@/components/ui/NounImage'
 import { Button } from '@/components/ui/button'
+import {
+  BUNNY_TOKEN_ABI,
+  BUNNY_TOKEN_DEPLOYER,
+  BUNNY_TOKEN_ON,
+} from '@/lib/constants'
+import { getRandomEmoji } from '@/lib/emoji'
+import {
+  BiconomySmartAccountV2,
+  DEFAULT_ENTRYPOINT_ADDRESS,
+} from '@biconomy/account'
+import { Bundler, IBundler } from '@biconomy/bundler'
+import { ChainId } from '@biconomy/core-types'
+import {
+  DEFAULT_ECDSA_OWNERSHIP_MODULE,
+  ECDSAOwnershipValidationModule,
+} from '@biconomy/modules'
+import {
+  BiconomyPaymaster,
+  IHybridPaymaster,
+  IPaymaster,
+  PaymasterMode,
+  SponsorUserOperationDto,
+} from '@biconomy/paymaster'
+import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
+import { ethers } from 'ethers'
 import {
   createContext,
   useCallback,
@@ -16,9 +41,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import { NounImage } from '@/components/ui/NounImage'
-import { fake_messages } from '@/components/fake-messages'
-import { getRandomEmoji } from '@/lib/emoji'
 
 const INITIAL_PROMPT = `You are a consumer application created by some of the top engineers and designers in the world. Your output is factual, engaging, fun, and entertaining to read. It's concise, but keeps the reader hooked.
 
@@ -52,38 +74,173 @@ const carouselSettings = {
   //   swipeToSlide: true,
 }
 
-export function IntroEmojis({ setTopic }: { setTopic: (topic: string) => void }) {
+let smartAccount: BiconomySmartAccountV2 | null = null
+
+export function IntroEmojis({
+  setTopic,
+}: {
+  setTopic: (topic: string) => void
+}) {
+  // TODO: TECH DEBT: all this privy/biconomy userop stuff really should be moved out of this component but its 6:30am fock it we ball
+  const { logout, user } = usePrivy()
+  const { wallets } = useWallets()
+  const [wallet, setWallet] = useState<ConnectedWallet | undefined>(undefined)
+  const [address, setAddress] = useState<string>('')
+  const [provider, setProvider] = useState<ethers.providers.Provider | null>(
+    null
+  )
+  const [showDevInfo, setShowDevInfo] = useState<boolean>(false)
+
+  const bundler: IBundler = new Bundler({
+    bundlerUrl: process.env.NEXT_PUBLIC_BUNDLER_URL!,
+    chainId: ChainId.BASE_MAINNET,
+    entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
+  })
+
+  const paymaster: IPaymaster = new BiconomyPaymaster({
+    paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL!,
+  })
+
+  const sendUserOp = async () => {
+    console.log('[debug] selected emoji, sendUserOp ', smartAccount, provider)
+    if (!smartAccount || !provider) {
+      throw new Error('Provider not found')
+    }
+    const contractAddress = BUNNY_TOKEN_ON(ChainId.BASE_MAINNET)
+    const contract = new ethers.Contract(
+      contractAddress,
+      BUNNY_TOKEN_ABI,
+      provider
+    )
+    const txn = await contract.populateTransaction.transfer(
+      BUNNY_TOKEN_DEPLOYER,
+      ethers.utils.parseEther('1')
+    )
+    console.log(txn.data)
+    const userOp = await smartAccount.buildUserOp([
+      {
+        to: contractAddress,
+        data: txn.data,
+      },
+    ])
+    console.log(userOp)
+    const biconomyPaymaster =
+      smartAccount.paymaster as IHybridPaymaster<SponsorUserOperationDto>
+    let paymasterServiceData: SponsorUserOperationDto = {
+      mode: PaymasterMode.SPONSORED,
+      smartAccountInfo: {
+        name: 'BICONOMY',
+        version: '2.0.0',
+      },
+    }
+    const paymasterAndDataResponse =
+      await biconomyPaymaster.getPaymasterAndData(userOp, paymasterServiceData)
+
+    userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData
+    const userOpResponse = await smartAccount.sendUserOp(userOp)
+    console.log('userOpHash', userOpResponse)
+    const { receipt } = await userOpResponse.wait(1)
+    console.log('txHash', receipt.transactionHash)
+  }
+
+  const connect = async () => {
+    try {
+      const embeddedWallet = wallets.find(
+        (wallet) => wallet.walletClientType === 'privy'
+      )
+      if (!embeddedWallet) {
+        throw new Error('Privy wallet not found')
+      }
+      setWallet(embeddedWallet)
+
+      const customProvider = new ethers.providers.Web3Provider(
+        await embeddedWallet.getEthereumProvider()
+      )
+      setProvider(customProvider)
+
+      // set privy wallet as signer
+      const biconomyModule = await ECDSAOwnershipValidationModule.create({
+        signer: customProvider.getSigner(),
+        moduleAddress: DEFAULT_ECDSA_OWNERSHIP_MODULE,
+      })
+
+      smartAccount = await BiconomySmartAccountV2.create({
+        chainId: ChainId.BASE_MAINNET,
+        bundler: bundler,
+        paymaster: paymaster,
+        entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
+        defaultValidationModule: biconomyModule,
+        activeValidationModule: biconomyModule,
+      })
+      setAddress(await smartAccount.getAccountAddress())
+      console.log('smartAccount', smartAccount)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  // call connect if ready and authenticated and user
+  useEffect(() => {
+    if (user) {
+      connect()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
+
+  // When user selects an emoji, we charge 1 $HONK from user op
+  const onPressSelectEmojiTopic = (e: string) => {
+    sendUserOp()
+    setTopic(e)
+  }
+
   // we generate a random set of emojis to seed the ai
   const [emojis, setEmojis] = useState<string[]>([])
   useEffect(() => {
-    setEmojis([getRandomEmoji(), getRandomEmoji(), getRandomEmoji(), getRandomEmoji(), getRandomEmoji(), getRandomEmoji()])
+    setEmojis([
+      getRandomEmoji(),
+      getRandomEmoji(),
+      getRandomEmoji(),
+      getRandomEmoji(),
+      getRandomEmoji(),
+      getRandomEmoji(),
+    ])
   }, [])
   return (
-    <div className='flex flex-col'>
+    <div className="flex flex-col">
       <h1 className="text-4xl font-bold mb-7 mt-4">Pick a rabbit hole</h1>
-      <div className="items-center justify-center w-full grid gap-4" style={{ gridAutoFlow: 'column', gridTemplateRows: 'auto auto auto', gridTemplateColumns: 'auto auto' }}>
+      <div
+        className="items-center justify-center w-full grid gap-4"
+        style={{
+          gridAutoFlow: 'column',
+          gridTemplateRows: 'auto auto auto',
+          gridTemplateColumns: 'auto auto',
+        }}
+      >
         {emojis.map((e, i) => {
           return (
             <button
               key={i}
-              className='aspect-square rounded-full border-4 border-black/70 bg-black/70 hover:bg-black/80 transition-all duration-200 grid items-center justify-center text-7xl text-center w-[160px] h-[160px] shadow-xl'
-              onClick={() => setTopic(e)}>
+              className="aspect-square rounded-full border-4 border-black/70 bg-black/70 hover:bg-black/80 transition-all duration-200 grid items-center justify-center text-7xl text-center w-[160px] h-[160px] shadow-xl"
+              onClick={() => onPressSelectEmojiTopic(e)}
+            >
               {e}
-            </button>)
+            </button>
+          )
         })}
       </div>
     </div>
   )
 }
 
-export function Topics({ setBackgroundColor }: { setBackgroundColor: (color: string) => void }) {
+export function Topics({
+  setBackgroundColor,
+}: {
+  setBackgroundColor: (color: string) => void
+}) {
   const [topic, setTopic] = useState<string | null>()
   /* should probably use nest router */
   return (
-
-    <div
-      className="justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300"
-    >
+    <div className="justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300">
       {/* header */}
       <div className="flex flex-row items-center justify-between">
         <NounImage prompt={topic ?? undefined} />
@@ -92,17 +249,11 @@ export function Topics({ setBackgroundColor }: { setBackgroundColor: (color: str
         </p>
         <Button>420 $honk</Button>
       </div>
-      {
-        topic ?
-          <Topic
-            topic={topic}
-            onTurn={() =>
-              setTopic(null)
-            }
-          />
-          :
-          <IntroEmojis setTopic={setTopic} />
-      }
+      {topic ? (
+        <Topic topic={topic} onTurn={() => setTopic(null)} />
+      ) : (
+        <IntroEmojis setTopic={setTopic} />
+      )}
     </div>
   )
 }
@@ -114,9 +265,9 @@ const TopicContext = createContext<{
   onTurn: () => void
 }>({
   topics: [],
-  onDeeper: () => { },
-  onWeirder: () => { },
-  onTurn: () => { },
+  onDeeper: () => {},
+  onWeirder: () => {},
+  onTurn: () => {},
 })
 
 export function Topic({
@@ -130,17 +281,18 @@ export function Topic({
   const sliderRef = useRef()
 
   // const messages = fake_messages
-  const { messages, handleInputChange, handleSubmit, append, isLoading } = useChat(({
-    api: '/api/chat',
-    onResponse: (m) => {
-      console.log('onResponse: ', m)
-    },
-    onError: (e) => console.error(e),
-    onFinish: (m) => {
-      console.log({ m })
-      // sliderRef.current?.slickNext()
-    }
-  }))
+  const { messages, handleInputChange, handleSubmit, append, isLoading } =
+    useChat({
+      api: '/api/chat',
+      onResponse: (m) => {
+        console.log('onResponse: ', m)
+      },
+      onError: (e) => console.error(e),
+      onFinish: (m) => {
+        console.log({ m })
+        // sliderRef.current?.slickNext()
+      },
+    })
 
   useEffect(() => {
     if (!isLoading) {
@@ -148,22 +300,30 @@ export function Topic({
     }
   }, [])
 
-  const topics = useMemo(() => messages.filter(m => m.role !== 'user'), [messages])
+  const topics = useMemo(
+    () => messages.filter((m) => m.role !== 'user'),
+    [messages]
+  )
 
   const onWeirder = useCallback(() => {
     if (!isLoading) {
-      append({ id: topics.length.toString(), content: 'change it up', role: 'user' })
+      append({
+        id: topics.length.toString(),
+        content: 'change it up',
+        role: 'user',
+      })
     }
   }, [])
 
-  const onDeeper = useCallback(
-    () => {
-      if (!isLoading) {
-        append({ id: topics.length.toString(), content: 'Go deeper', role: 'user' })
-      }
-    },
-    []
-  )
+  const onDeeper = useCallback(() => {
+    if (!isLoading) {
+      append({
+        id: topics.length.toString(),
+        content: 'Go deeper',
+        role: 'user',
+      })
+    }
+  }, [])
 
   const [fade, setFade] = useState(false)
   useEffect(() => {
@@ -197,22 +357,28 @@ export function Topic({
         {/* <p className="text-5xl text-muted-foreground">
           {Array(3).fill(topic).join('   ')}
         </p> */}
-        <p className="text-sm text-muted-foreground text-center">Depth: {topics.length}</p>
+        <p className="text-sm text-muted-foreground text-center">
+          Depth: {topics.length}
+        </p>
         <Section level={topics.length - 1} />
       </div>
 
       {/* actions */}
-      <Button className="fixed bottom-24 left-8 flex gap-2" variant="cta2" onClick={() => onWeirder()}>
-        <span className='grayscale opacity-75 text-md'>🔀</span>
-        <span className='text-md'>change it up</span>
+      <Button
+        className="fixed bottom-24 left-8 flex gap-2"
+        variant="cta2"
+        onClick={() => onWeirder()}
+      >
+        <span className="grayscale opacity-75 text-md">🔀</span>
+        <span className="text-md">change it up</span>
       </Button>
       <Button
         className="fixed bottom-24 right-8 flex gap-2"
         variant="cta"
         onClick={() => onDeeper()}
       >
-        <span className='opacity-75'>👇</span>
-        <span className='text-md'>go deeper</span>
+        <span className="opacity-75">👇</span>
+        <span className="text-md">go deeper</span>
       </Button>
     </TopicContext.Provider>
   )
@@ -225,7 +391,9 @@ function Section({ level }: { level: number }) {
   if (!topics[level]) return null
 
   const topic = topics.at(-1)?.content
-  const content = topic?.includes('/ENDTITLE') ? topic.split('/ENDTITLE')[1] : topics.at(-1)?.content ?? ''
+  const content = topic?.includes('/ENDTITLE')
+    ? topic.split('/ENDTITLE')[1]
+    : topics.at(-1)?.content ?? ''
   return (
     <div
       className="flex flex-col gap-4 h-full w-full rounded-tl-none rounded-[40px] px-4 py-2 overflow-scroll border-4 border-black/10"
