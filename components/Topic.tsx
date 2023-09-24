@@ -4,6 +4,7 @@ import { darken } from 'polished'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick-theme.css'
 import 'slick-carousel/slick/slick.css'
+import { useChat, Message } from 'ai/react';
 
 import { Button } from '@/components/ui/button'
 import {
@@ -11,9 +12,30 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
+  useRef,
   useState,
 } from 'react'
-import { NounIcon } from './ui/NounIcon'
+import { NounIcon } from '@/components/ui/NounIcon'
+import { fake_messages } from '@/components/fake-messages'
+
+const INITIAL_PROMPT = `You are a consumer application created by some of the top engineers and designers in the world. Your output is factual, engaging, fun, and entertaining to read. It's concise, but keeps the reader hooked.
+
+Give me a "rabbit hole" that someone could go down. This will be going into a UI with a bunch of cards on it. A rabbit hole is a topic that would be interesting to the average person and make them say, "huh, that's interesting," and want to know more about the topic. These could be about pretty much anything, as long as they are factually and historically accurate and don't discuss any topics that would be considered controversial or for which the science is not settled. Don't use any topics that you aren't completely sure about. However, these topics should each connect to something that anyone who's a little bit curious would want to know more about.
+
+Then, when a user taps on one of the emojis, I'm going to send you that emoji and you will use it as input into your rabbit hole. The user will then be prompted with one of two options: "Go deeper," which will make you generate more information about the topic until you feel the topic has been covered thoroughly enough that the reader would say they had learned something new, or "Change it up," which would find some variant of the topic that's semi-relevant but changes things up a bit.
+
+You should start your response with a title that ends in the text /ENDTITLE.
+
+I want you to take an input of a single emoji (I will end the prompt with it) and return to me a single "chunk" of the rabbit hole. Then, based on "Go deeper" or "Change it up" being my reply, you should return the expected next chunk of the fun fact.
+
+Again, these topics should all be factual but interesting. They can be about anything related to history, modern life, science, fun facts, trivia, or anything like those topics. Every "chunk" you share after a follow-up should end with a hook or something that makes the reader want to learn more.
+
+Assume that the only user input to follow up with will be one of the two choices: Go deeper or Change it up. But don't give any context about that. Just say something organic about "scroll to go deeper" or something like that.
+
+Every time you give any text, your response should be no longer than 3 short sentences. You can use emojis, but use them sparingly and only when they really add to the text and make it more engaging. Maybe at the end of sentences.
+
+The emoji the rabbit hole should be based on is: `
 
 const carouselSettings = {
   dots: false,
@@ -28,28 +50,52 @@ const carouselSettings = {
 }
 
 const TopicContext = createContext<{
-  activeLevel: number
-  topic: Array<[string, string]>
-  onDeeper: (newLevel: number) => void
+  topics: Message[]
+  onDeeper: () => void
+  onWeirder: () => void
   onTurn: () => void
 }>({
-  activeLevel: 0,
-  topic: [],
-  onDeeper: () => {},
-  onTurn: () => {},
+  topics: [],
+  onDeeper: () => { },
+  onWeirder: () => { },
+  onTurn: () => { },
 })
 
 export function Topic({
   topic,
   onTurn,
 }: {
-  topic: Array<[string, string]>
+  topic: string
   onTurn: () => void
 }) {
-  const [activeLevel, setActiveLevel] = useState(0)
+  const sliderRef = useRef()
 
+  // const messages = fake_messages
+  const { messages, handleInputChange, handleSubmit, append } = useChat(({
+    api: '/api/chat',
+    onError: (e) => console.error(e),
+    onFinish: (m) => {
+      console.log({ m })
+      // @ts-expect-error
+      // sliderRef.current?.slickNext()
+    }
+  }))
+
+  useEffect(() => {
+    debugger
+    append({ id: 'seed', content: INITIAL_PROMPT + topic, role: 'user' })
+  }, [])
+
+  const topics = useMemo(() => messages.filter(m => m.role !== 'user'), [messages])
+
+  const onWeirder = useCallback(() => {
+    // append({ id: newLevel.toString(), content: 'go weirder', role: 'user' })
+  }, [])
   const onDeeper = useCallback(
-    (newLevel: number) => setActiveLevel(newLevel),
+    () => {
+      debugger
+      append({ id: topics.length.toString(), content: 'go deeper', role: 'user' })
+    },
     []
   )
 
@@ -65,37 +111,40 @@ export function Topic({
     }
   })
 
+  if (!topics || !topics.length) return 'Loading...'
+
+  console.log({ topics })
+
+  debugger
+
   return (
-    <TopicContext.Provider value={{ topic, activeLevel, onDeeper, onTurn }}>
+    <TopicContext.Provider value={{ topics, onDeeper, onTurn, onWeirder }}>
       <Slider
         {...carouselSettings}
         className="h-full"
-        afterChange={(level) => {
-          setActiveLevel(level)
-        }}
+        onSwipe={() => onDeeper()}
+        // @ts-expect-error
+        ref={sliderRef}
       >
-        <Section level={0} />
-        <Section level={1} />
-        <Section level={2} />
+        {messages.map((m, i) => <Section level={i} />)}
       </Slider>
 
       <div
-        className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300 ${
-          !fade ? 'opacity-100' : 'opacity-0'
-        }`}
+        className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300 ${!fade ? 'opacity-100' : 'opacity-0'
+          }`}
       >
         {/* header */}
         <div className="flex flex-row justify-between">
-          <NounIcon prompt={topic[0][0]} />
+          <NounIcon prompt={topics[0].content} />
           <Button>420 $honk</Button>
         </div>
 
         {/* topic */}
         <div className="flex flex-col gap-1">
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            {topic[activeLevel][0]}
+            {topics.at(-1)?.content?.split('/ENDTITLE')[0] ?? topics.at(-1)?.content.slice(0, 25)}
           </h1>
-          <p className="text-md text-muted-foreground">Level {activeLevel}</p>
+          <p className="text-md text-muted-foreground">Level {topics.length}</p>
         </div>
       </div>
     </TopicContext.Provider>
@@ -103,18 +152,20 @@ export function Topic({
 }
 
 function Section({ level }: { level: number }) {
-  const { topic, onDeeper, onTurn } = useContext(TopicContext)
+  const { topics, onDeeper, onTurn, onWeirder } = useContext(TopicContext)
   const backgroundColor = darken(level * 0.05, '#FFCD64')
 
-  if (!topic[level]) return null
+  if (!topics[level]) return null
 
+  const content = topics.at(-1)?.content.split('/ENDTITLE')[1] ?? topics.at(-1)?.content ?? ''
+  debugger
   return (
     <div
       className="flex flex-col gap-4 px-8 h-screen w-screen"
       style={{ backgroundColor }}
     >
-      <div className="flex flex-col gap-4 font-bold mt-44">
-        {topic[level][1].split('.').map((t, i) => (
+      <div className="flex flex-col gap-4 font-bold mt-52">
+        {content.split('.').map((t, i) => (
           <p key={i} className="text-lg">
             {t}
           </p>
@@ -126,11 +177,11 @@ function Section({ level }: { level: number }) {
         <Button
           className="w-1/2"
           variant="cta"
-          onClick={() => onDeeper(level + 1)}
+          onClick={() => onDeeper()}
         >
           👇 deeper
         </Button>
-        <Button className="w-1/2" variant="cta2" onClick={onTurn}>
+        <Button className="w-1/2" variant="cta2" onClick={() => onWeirder()}>
           🤪 weirder
         </Button>
       </div>
