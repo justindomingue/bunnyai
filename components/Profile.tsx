@@ -62,7 +62,7 @@ export function Profile() {
     )
     const txn = await contract.populateTransaction.transfer(
       BUNNY_TOKEN_DEPLOYER,
-      1
+      ethers.utils.parseEther('1')
     )
     console.log(txn.data)
     const userOp = await smartAccount.buildUserOp([
