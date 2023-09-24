@@ -52,37 +52,59 @@ const carouselSettings = {
   //   swipeToSlide: true,
 }
 
-export function Topics() {
-  // Should probably live somewhere else..
+export function IntroEmojis({ setTopic }: { setTopic: (topic: string) => void }) {
   // we generate a random set of emojis to seed the ai
   const [emojis, setEmojis] = useState<string[]>([])
   useEffect(() => {
     setEmojis([getRandomEmoji(), getRandomEmoji(), getRandomEmoji(), getRandomEmoji(), getRandomEmoji(), getRandomEmoji()])
   }, [])
-
-  const [topic, setTopic] = useState<string | null>()
-  /* should probably use nest router */
-  return topic ?
-    <Topic
-      topic={topic}
-      onTurn={() =>
-        setTopic(null)
-      }
-    />
-    :
-    <div className='flex flex-col items-center justify-center h-full w-full pt-20'>
-      <div className="w-full grid gap-10" style={{ gridAutoFlow: 'column', gridTemplateRows: 'auto auto auto', gridTemplateColumns: 'auto auto' }}>
+  return (
+    <div className='flex flex-col'>
+      <h1 className="text-4xl font-bold mb-7 mt-4">Pick a rabbit hole</h1>
+      <div className="items-center justify-center w-full grid gap-4" style={{ gridAutoFlow: 'column', gridTemplateRows: 'auto auto auto', gridTemplateColumns: 'auto auto' }}>
         {emojis.map((e, i) => {
           return (
             <button
               key={i}
-              className='aspect-square rounded-full border-4 border-black/70 bg-black/40 hover:bg-black/50 transition-all duration-200 grid items-center justify-center text-7xl text-center w-32 h-32'
+              className='aspect-square rounded-full border-4 border-black/70 bg-black/70 hover:bg-black/80 transition-all duration-200 grid items-center justify-center text-7xl text-center w-[160px] h-[160px] shadow-xl'
               onClick={() => setTopic(e)}>
               {e}
             </button>)
         })}
       </div>
     </div>
+  )
+}
+
+export function Topics({ setBackgroundColor }: { setBackgroundColor: (color: string) => void }) {
+  const [topic, setTopic] = useState<string | null>()
+  /* should probably use nest router */
+  return (
+
+    <div
+      className="justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300"
+    >
+      {/* header */}
+      <div className="flex flex-row items-center justify-between">
+        <NounImage prompt={topic ?? undefined} />
+        <p className="text-3xl text-muted-foreground">
+          {Array(3).fill(topic).join('   ')}
+        </p>
+        <Button>420 $honk</Button>
+      </div>
+      {
+        topic ?
+          <Topic
+            topic={topic}
+            onTurn={() =>
+              setTopic(null)
+            }
+          />
+          :
+          <IntroEmojis setTopic={setTopic} />
+      }
+    </div>
+  )
 }
 
 const TopicContext = createContext<{
@@ -157,48 +179,48 @@ export function Topic({
 
   if (!topics || !topics.length) return 'Loading...'
 
-  console.log({ topics })
+  // console.log({ topics })
 
   return (
     <TopicContext.Provider value={{ topics, onDeeper, onTurn, onWeirder }}>
-      <Slider
+      {/* <Slider
         {...carouselSettings}
         className="h-full"
         onSwipe={() => onDeeper()}
         // @ts-expect-error
         ref={sliderRef}
       >
-        {messages.map((m, i) => <Section key={i} level={i} />)}
-      </Slider>
+      </Slider> */}
 
-      <div
-        className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300 ${!fade ? 'opacity-100' : 'opacity-0'
-          }`}
-      >
-        {/* header */}
-        <div className="flex flex-row justify-between">
-          <NounImage prompt={topics[0].id} />
-          <Button>420 $honk</Button>
-        </div>
-
-        {/* topic */}
-        <div className="flex flex-col gap-1">
-          {/* <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            {topics.at(-1)?.content?.split('/ENDTITLE')[0].slice(0, 40) ?? topics.at(-1)?.content.slice(0, 40)}
-          </h1> */}
-          <p className="text-5xl text-muted-foreground">
-            {Array(3).fill(topic).join(' ')}
-          </p>
-          <p className="text-md text-muted-foreground">Level {topics.length}</p>
-        </div>
+      {/* topic */}
+      <div className="flex flex-col gap-1">
+        {/* <p className="text-5xl text-muted-foreground">
+          {Array(3).fill(topic).join('   ')}
+        </p> */}
+        <p className="text-sm text-muted-foreground text-center">Depth: {topics.length}</p>
+        <Section level={topics.length - 1} />
       </div>
+
+      {/* actions */}
+      <Button className="fixed bottom-24 left-8 flex gap-2" variant="cta2" onClick={() => onWeirder()}>
+        <span className='grayscale opacity-75 text-md'>🔀</span>
+        <span className='text-md'>change it up</span>
+      </Button>
+      <Button
+        className="fixed bottom-24 right-8 flex gap-2"
+        variant="cta"
+        onClick={() => onDeeper()}
+      >
+        <span className='opacity-75'>👇</span>
+        <span className='text-md'>go deeper</span>
+      </Button>
     </TopicContext.Provider>
   )
 }
 
 function Section({ level }: { level: number }) {
   const { topics, onDeeper, onTurn, onWeirder } = useContext(TopicContext)
-  const backgroundColor = darken(level * 0.05, '#ffe7b2')
+  const backgroundColor = darken(level * 0.025, '#ffe7b2')
 
   if (!topics[level]) return null
 
@@ -206,31 +228,15 @@ function Section({ level }: { level: number }) {
   const content = topic?.includes('/ENDTITLE') ? topic.split('/ENDTITLE')[1] : topics.at(-1)?.content ?? ''
   return (
     <div
-      className="flex flex-col gap-4 px-8 h-screen w-screen pb-32"
+      className="flex flex-col gap-4 h-full w-full rounded-tl-none rounded-[40px] px-4 py-2 overflow-scroll border-4 border-black/10"
       style={{ backgroundColor }}
     >
-      <div className="flex flex-col gap-4 font-bold mt-52 flex-1">
+      <div className="flex flex-col gap-4 mt-1 flex-1 overflow-scroll max-h-[450px]">
         {content.split('.').map((t, i) => (
           <p key={i} className="text-lg">
             {t}
           </p>
         ))}
-      </div>
-
-      {/* actions */}
-      <div className="flex flex-row justify-between gap-2">
-        <Button className="w-1/2 flex gap-2" variant="cta2" onClick={() => onWeirder()}>
-          <span className='grayscale opacity-50 text-sm'>🔀</span>
-          <span className='text-sm'>change it up</span>
-        </Button>
-        <Button
-          className="w-1/2 flex gap-2"
-          variant="cta"
-          onClick={() => onDeeper()}
-        >
-          <span className='opacity-50'>👇</span>
-          <span className='text-sm'>go deeper</span>
-        </Button>
       </div>
     </div>
   )

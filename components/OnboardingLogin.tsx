@@ -4,13 +4,10 @@ import 'slick-carousel/slick/slick-theme.css'
 import 'slick-carousel/slick/slick.css'
 
 import { Button } from '@/components/ui/button'
-import { BiconomySmartAccountV2 } from '@biconomy/account'
 import { usePrivy } from '@privy-io/react-auth'
 import { NounImage } from './ui/NounImage'
 
-export let smartAccount: BiconomySmartAccountV2 | null = null
-
-export function OnboardingLogin({}: {}) {
+export function OnboardingLogin({ }: {}) {
   const { login } = usePrivy()
 
   const onPressCreateBunny = () => {

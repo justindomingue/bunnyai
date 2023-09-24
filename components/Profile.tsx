@@ -155,14 +155,14 @@ export function Profile() {
           <Button
             className="w-1/2 bg-green-400"
             variant="cta"
-            onClick={() => {}}
+            onClick={() => { }}
           >
             get $honk
           </Button>
           <Button
             className="w-1/2 bg-slate-500"
             variant="cta2"
-            onClick={() => {}}
+            onClick={() => { }}
           >
             420 $honk
           </Button>
@@ -170,9 +170,10 @@ export function Profile() {
       </div>
       {/* body */}
       <div className="flex flex-col gap-4 px-4 overflow-auto pt-6 pb-14">
-        <div className="flex flex-col px-8 py-4 rounded-sm gap-3 bg-slate-50 bg-opacity-50">
+        <div className="flex flex-col px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50">
           <h3 className="text-2xl text-white">claim 10 free $honk</h3>
           <Button
+            className='bg-yellow-300 hover:bg-yellow-400 text-black'
             onClick={() => {
               // TODO: ADD CLAIM 10 $HONK!!!
             }}
@@ -181,7 +182,7 @@ export function Profile() {
           </Button>
         </div>
 
-        <div className="flex flex-col only:px-8 py-4 rounded-sm gap-3 bg-slate-50 bg-opacity-50">
+        <div className="flex flex-col only:px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50 px-4">
           <h3 className="text-2xl text-white">
             verify with WorldID for 420 bonus free $honk
           </h3>
@@ -194,7 +195,7 @@ export function Profile() {
           </Button>
         </div>
 
-        <div className="flex flex-col px-8 py-4 rounded-sm gap-3 bg-slate-50 bg-opacity-50">
+        <div className="flex flex-col px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50">
           <h3 className="text-2xl text-white">buy $honk on uniswap (base)</h3>
           <Button
             onClick={() => {
