@@ -33,6 +33,8 @@ import {
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
 import {
+  Dispatch,
+  SetStateAction,
   createContext,
   useCallback,
   useContext,
@@ -237,26 +239,39 @@ export function IntroEmojis({
 }
 
 export function Topics({
-  setBackgroundColor,
+  localHonk,
+  setLocalHonk,
 }: {
-  setBackgroundColor: (color: string) => void
+  localHonk: number
+  setLocalHonk: Dispatch<SetStateAction<number>>
 }) {
   const [topic, setTopic] = useState<string | null>()
+
+  // TODO: add onchain honk balance
+  const honkBalance = localHonk
+
   /* should probably use nest router */
   return (
     <div className="justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300">
       {/* header */}
       <div className="flex flex-row items-center justify-between">
-        <div className='flex flex-row gap-2 items-center justify-center'>
+        <div className="flex flex-row gap-2 items-center justify-center">
           <NounImage prompt={topic ?? undefined} />
-          <div className='relative flex'>
+          <div className="relative flex">
             <p className="text-5xl text-muted-foreground">
               {Array(1).fill(topic).join('   ')}
             </p>
-            {topic !== null ? <Button className='absolute -top-3 -right-7 w-8 h-8 bg-gray-500/20 flex items-center justify-center text-sm text-gray-500 border border-gray-200' onClick={() => setTopic(null)}>{'✖'}</Button> : null}
+            {!!topic ? (
+              <Button
+                className="absolute -top-3 -right-7 w-8 h-8 bg-gray-500/20 flex items-center justify-center text-sm text-gray-500 border border-gray-200"
+                onClick={() => setTopic(null)}
+              >
+                {'✖'}
+              </Button>
+            ) : null}
           </div>
         </div>
-        <Button>420 $honk</Button>
+        <Button className="bg-green-400 flex items-center justify-center text-xl px-5 py-2 text-white border border-gray-200">{`${honkBalance} $honk`}</Button>
       </div>
       {topic ? (
         <Topic topic={topic} onTurn={() => setTopic(null)} />
@@ -274,9 +289,9 @@ const TopicContext = createContext<{
   onTurn: () => void
 }>({
   topics: [],
-  onDeeper: () => { },
-  onWeirder: () => { },
-  onTurn: () => { },
+  onDeeper: () => {},
+  onWeirder: () => {},
+  onTurn: () => {},
 })
 
 export function Topic({
@@ -370,9 +385,13 @@ export function Topic({
       </div>
 
       {/* actions */}
-      <Button className="fixed bottom-24 left-8 flex gap-2 px-5" variant="cta2" onClick={() => onWeirder()}>
+      <Button
+        className="fixed bottom-24 left-8 flex gap-2 px-5"
+        variant="cta2"
+        onClick={() => onWeirder()}
+      >
         {/* <span className='grayscale opacity-75 text-md'>🔀</span> */}
-        <span className='text-md'>change it up</span>
+        <span className="text-md">change it up</span>
       </Button>
       <Button
         className="fixed bottom-24 right-8 flex gap-2 px-5"
@@ -380,7 +399,7 @@ export function Topic({
         onClick={() => onDeeper()}
       >
         {/* <span className='opacity-75'>👇</span> */}
-        <span className='text-md'>go deeper</span>
+        <span className="text-md">go deeper</span>
       </Button>
     </TopicContext.Provider>
   )

@@ -11,6 +11,8 @@ import { useState } from 'react'
 
 export default function Home() {
   const [backgroundColor, setBackgroundColor] = useState('#ffe7b2')
+  // local "fake" $honk credits for user onboarding when claiing free $honk and worldID verified credits
+  const [localHonk, setLocalHonk] = useState<number>(0)
   const { ready, authenticated, user } = usePrivy()
 
   if (!ready) {
@@ -46,10 +48,10 @@ export default function Home() {
     >
       <Tabs defaultValue="feed" className="flex flex-col flex-1 gap-8">
         <TabsContent value="feed">
-          <Topics setBackgroundColor={setBackgroundColor} />
+          <Topics localHonk={localHonk} setLocalHonk={setLocalHonk} />
         </TabsContent>
         <TabsContent value="profile">
-          <Profile />
+          <Profile localHonk={localHonk} setLocalHonk={setLocalHonk} />
         </TabsContent>
         <TabsContent value="airdrop">
           <Airdrop />

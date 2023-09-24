@@ -26,12 +26,18 @@ import {
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
 import { CredentialType, IDKitWidget } from '@worldcoin/idkit'
 import { ethers } from 'ethers'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { NounImage } from './ui/NounImage'
 
 let smartAccount: BiconomySmartAccountV2 | null = null
 
-export function Profile() {
+export function Profile({
+  localHonk,
+  setLocalHonk,
+}: {
+  localHonk: number
+  setLocalHonk: Dispatch<SetStateAction<number>>
+}) {
   const { logout, user } = usePrivy()
   const { wallets } = useWallets()
   const [wallet, setWallet] = useState<ConnectedWallet | undefined>(undefined)
@@ -40,6 +46,9 @@ export function Profile() {
     null
   )
   const [showDevInfo, setShowDevInfo] = useState<boolean>(false)
+
+  // TODO: Add onchain honk balance to localHonk
+  const honkBalance = localHonk
 
   const bundler: IBundler = new Bundler({
     bundlerUrl: process.env.NEXT_PUBLIC_BUNDLER_URL!,
@@ -154,18 +163,12 @@ export function Profile() {
         </div>
         <div className="flex flex-row gap-3">
           <Button
-            className="w-1/2 bg-green-400"
-            variant="cta"
-            onClick={() => {}}
+            className="w-full bg-green-500"
+            onClick={() => {
+              // TODO: play honk sound lol
+            }}
           >
-            get $honk
-          </Button>
-          <Button
-            className="w-1/2 bg-slate-500"
-            variant="cta2"
-            onClick={() => {}}
-          >
-            420 $honk
+            {`${honkBalance} $honk`}
           </Button>
         </div>
       </div>
@@ -176,7 +179,8 @@ export function Profile() {
           <Button
             className="bg-yellow-300 hover:bg-yellow-400 text-black"
             onClick={() => {
-              // TODO: ADD CLAIM 10 $HONK!!!
+              // TODO: obviously this is janky to do this in local state, need to write to window storage
+              setLocalHonk(honkBalance + 10)
             }}
           >
             claim 10 $honk
@@ -193,6 +197,8 @@ export function Profile() {
             onSuccess={() => {
               // TODO:
               console.log('USER HAS ORB SCANNED! GIVE THEM FREE $honk!!')
+              // TODO: obviously this is janky to do this in local state, need to write to window storage
+              setLocalHonk(honkBalance + 100)
             }} // callback when the modal is closed
             handleVerify={() => {
               console.log('verifying user with worldID..')
