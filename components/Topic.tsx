@@ -80,11 +80,15 @@ let smartAccount: BiconomySmartAccountV2 | null = null
 
 export function IntroEmojis({
   setTopic,
+  localHonk,
+  setLocalHonk,
 }: {
   setTopic: (topic: string) => void
+  localHonk: number
+  setLocalHonk: Dispatch<SetStateAction<number>>
 }) {
   // TODO: TECH DEBT: all this privy/biconomy userop stuff really should be moved out of this component but its 6:30am fock it we ball
-  const { logout, user } = usePrivy()
+  const { user } = usePrivy()
   const { wallets } = useWallets()
   const [wallet, setWallet] = useState<ConnectedWallet | undefined>(undefined)
   const [address, setAddress] = useState<string>('')
@@ -191,8 +195,14 @@ export function IntroEmojis({
 
   // When user selects an emoji, we charge 1 $HONK from user op
   const onPressSelectEmojiTopic = (e: string) => {
-    sendUserOpToSpend1Honk()
     setTopic(e)
+
+    // Send userOp to use real $honk if user has balance, otherwise deduct from local
+    // if (onchainHonk > 0) {
+    sendUserOpToSpend1Honk()
+    // }
+
+    setLocalHonk(localHonk - 1)
   }
 
   // we generate a random set of emojis to seed the ai
@@ -276,7 +286,11 @@ export function Topics({
       {topic ? (
         <Topic topic={topic} onTurn={() => setTopic(null)} />
       ) : (
-        <IntroEmojis setTopic={setTopic} />
+        <IntroEmojis
+          setTopic={setTopic}
+          localHonk={localHonk}
+          setLocalHonk={setLocalHonk}
+        />
       )}
     </div>
   )

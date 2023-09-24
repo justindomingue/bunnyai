@@ -174,19 +174,22 @@ export function Profile({
       </div>
       {/* body */}
       <div className="flex flex-col gap-4 px-4 overflow-auto pt-6 pb-14">
-        <div className="flex flex-col px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50">
-          <h3 className="text-2xl text-white">claim 10 free $honk</h3>
-          <Button
-            className="bg-yellow-300 hover:bg-yellow-400 text-black"
-            onClick={() => {
-              // TODO: obviously this is janky to do this in local state, need to write to window storage
-              setLocalHonk(honkBalance + 10)
-            }}
-          >
-            claim 10 $honk
-          </Button>
-        </div>
-
+        {
+          <div className="flex flex-col px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50">
+            <h3 className="text-2xl text-white">claim 10 free $honk</h3>
+            <Button
+              disabled={localHonk !== 0}
+              className="bg-yellow-300 hover:bg-yellow-400 text-black"
+              onClick={() => {
+                // TODO: obviously this is janky to do this in local state, need to write to window storage
+                setLocalHonk(honkBalance + 10)
+              }}
+            >
+              {/* TODO: INSANELY naive, need to keep track of whether user redeemed their 10 free honk somewhere elese */}
+              {localHonk === 0 ? `claim 10 $honk` : `claimed!`}
+            </Button>
+          </div>
+        }
         <div className="flex flex-col only:px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50 px-4">
           <h3 className="text-2xl text-white">
             verify with WorldID for 100 bonus free $honk
@@ -195,7 +198,6 @@ export function Profile({
             app_id={process.env.WORLDCOIN_APP_ID!} // obtained from the Developer Portal
             action="claim-dollarhonk-0" // this is your action name from the Developer Portal
             onSuccess={() => {
-              // TODO:
               console.log('USER HAS ORB SCANNED! GIVE THEM FREE $honk!!')
               // TODO: obviously this is janky to do this in local state, need to write to window storage
               setLocalHonk(honkBalance + 100)
@@ -207,7 +209,12 @@ export function Profile({
             enableTelemetry // optional, defaults to false
           >
             {({ open }) => (
-              <Button onClick={open}>verify with WorldID™️</Button>
+              <Button disabled={localHonk > 10} onClick={open}>
+                {/* TODO: INSANELY naive, need to keep track of whether user redeemed their 10 free honk somewhere elese */}
+                {localHonk <= 10
+                  ? `verify with WorldID`
+                  : `verified and claimed!`}
+              </Button>
             )}
           </IDKitWidget>
         </div>
