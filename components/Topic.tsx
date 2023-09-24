@@ -196,13 +196,14 @@ export function IntroEmojis({
   // When user selects an emoji, we charge 1 $HONK from user op
   const onPressSelectEmojiTopic = (e: string) => {
     setTopic(e)
+    // to fix mine (dcj)
+    if (localHonk === -1) { setLocalHonk(0) }
 
-    // Send userOp to use real $honk if user has balance, otherwise deduct from local
-    // if (onchainHonk > 0) {
-    sendUserOpToSpend1Honk()
-    // }
-
-    setLocalHonk(localHonk - 1)
+    if (localHonk > 0) {
+      // Send userOp to use real $honk if user has balance, otherwise deduct from local
+      sendUserOpToSpend1Honk()
+      setLocalHonk(localHonk - 1)
+    }
   }
 
   // we generate a random set of emojis to seed the ai
@@ -303,9 +304,9 @@ const TopicContext = createContext<{
   onTurn: () => void
 }>({
   topics: [],
-  onDeeper: () => {},
-  onWeirder: () => {},
-  onTurn: () => {},
+  onDeeper: () => { },
+  onWeirder: () => { },
+  onTurn: () => { },
 })
 
 export function Topic({
