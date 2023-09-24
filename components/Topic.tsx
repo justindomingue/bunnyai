@@ -194,11 +194,8 @@ export function Topic({
 
       {/* topic */}
       <div className="flex flex-col gap-1">
-        {/* <p className="text-5xl text-muted-foreground">
-          {Array(3).fill(topic).join('   ')}
-        </p> */}
-        <p className="text-sm text-muted-foreground text-center">Depth: {topics.length}</p>
         <Section level={topics.length - 1} />
+        <p className="text-sm text-muted-foreground text-center opacity-50">Depth: {topics.length}</p>
       </div>
 
       {/* actions */}
