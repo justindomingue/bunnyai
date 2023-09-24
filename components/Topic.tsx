@@ -156,14 +156,14 @@ export function Topic({
       >
         {/* header */}
         <div className="flex flex-row justify-between">
-          <NounIcon prompt={topics[0].content} />
+          <NounIcon prompt={topics[0].id} />
           <Button>420 $honk</Button>
         </div>
 
         {/* topic */}
         <div className="flex flex-col gap-1">
           <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            {topics.at(-1)?.content?.split('/ENDTITLE')[0] ?? topics.at(-1)?.content.slice(0, 25)}
+            {topics.at(-1)?.content?.split('/ENDTITLE')[0].slice(0, 40) ?? topics.at(-1)?.content.slice(0, 40)}
           </h1>
           <p className="text-md text-muted-foreground">Level {topics.length}</p>
         </div>
@@ -182,10 +182,10 @@ function Section({ level }: { level: number }) {
   const content = topic?.includes('/ENDTITLE') ? topic.split('/ENDTITLE')[1] : topics.at(-1)?.content ?? ''
   return (
     <div
-      className="flex flex-col gap-4 px-8 h-screen w-screen"
+      className="flex flex-col gap-4 px-8 h-screen w-screen pb-32"
       style={{ backgroundColor }}
     >
-      <div className="flex flex-col gap-4 font-bold mt-52">
+      <div className="flex flex-col gap-4 font-bold mt-52 flex-1">
         {content.split('.').map((t, i) => (
           <p key={i} className="text-lg">
             {t}
