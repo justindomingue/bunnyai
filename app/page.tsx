@@ -5,6 +5,7 @@ import { OnboardingLogin } from '@/components/OnboardingLogin'
 import { Profile } from '@/components/Profile'
 import { Topics } from '@/components/Topic'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { BiconomySmartAccountV2 } from '@biconomy/account'
 
 export let smartAccount: BiconomySmartAccountV2 | null = null
 
