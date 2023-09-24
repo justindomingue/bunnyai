@@ -6,8 +6,6 @@ import { Profile } from '@/components/Profile'
 import { Topics } from '@/components/Topic'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const PROMPT = `come up with 6 emojis`
-
 export default function Home() {
 
   return (
