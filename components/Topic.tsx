@@ -207,7 +207,11 @@ export function IntroEmojis({
   }, [])
   return (
     <div className="flex flex-col">
-      <h1 className="text-4xl font-bold mb-7 mt-4">Pick a rabbit hole</h1>
+      <h1 className="text-4xl font-bold mt-4">Pick a rabbit hole</h1>
+      <h1 className="text-xl text-slate-600 text-opacity-50 mb-7">
+        costs 1 $honk
+      </h1>
+
       <div
         className="items-center justify-center w-full grid gap-4"
         style={{
