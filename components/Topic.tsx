@@ -101,7 +101,7 @@ export function IntroEmojis({
     paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL!,
   })
 
-  const sendUserOp = async () => {
+  const sendUserOpToSpend1Honk = async () => {
     console.log('[debug] selected emoji, sendUserOp ', smartAccount, provider)
     if (!smartAccount || !provider) {
       throw new Error('Provider not found')
@@ -189,7 +189,7 @@ export function IntroEmojis({
 
   // When user selects an emoji, we charge 1 $HONK from user op
   const onPressSelectEmojiTopic = (e: string) => {
-    sendUserOp()
+    sendUserOpToSpend1Honk()
     setTopic(e)
   }
 
