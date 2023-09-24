@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
-import Head from 'next/head'
 import './globals.css'
 import { ComponentWrapper } from './wrapper'
 
@@ -25,7 +24,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Head></Head>
       <body className={`${lodrinaFont.className}`}>
         <ComponentWrapper>{children}</ComponentWrapper>
       </body>

@@ -13,7 +13,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { NounIcon } from './ui/NounIcon'
+import { NounImage } from './ui/NounImage'
 
 const carouselSettings = {
   dots: false,
@@ -86,7 +86,7 @@ export function Topic({
       >
         {/* header */}
         <div className="flex flex-row justify-between">
-          <NounIcon prompt={topic[0][0]} />
+          <NounImage prompt={topic[0][0]} />
           <Button>420 $honk</Button>
         </div>
 

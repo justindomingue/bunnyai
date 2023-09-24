@@ -43,7 +43,7 @@ export const Meta = ({}: Props) => {
       />
       <meta name="twitter:card" content="down rabbit holes like never before" />
       <meta name="twitter:url" content="https://hibunny.ai" />
-      <meta name="twitter:title" content="bunnyAI" />
+      <meta name="twitter:title" content="BunnyAI" />
       <meta
         name="twitter:description"
         content="down rabbit holes like never before"
