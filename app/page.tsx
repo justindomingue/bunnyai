@@ -6,6 +6,8 @@ import { Profile } from '@/components/Profile'
 import { Topics } from '@/components/Topic'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+export let smartAccount: BiconomySmartAccountV2 | null = null
+
 export default function Home() {
 
   return (
@@ -20,14 +22,10 @@ export default function Home() {
         <TabsContent value="airdrop">
           <Airdrop />
         </TabsContent>
-        <TabsContent value="onboarding">
-          <OnboardingLogin />
-        </TabsContent>
         <TabsList className="absolute bottom-8">
           <TabsTrigger value="feed">for you</TabsTrigger>
           <TabsTrigger value="profile">profile </TabsTrigger>
           <TabsTrigger value="airdrop">airdrop</TabsTrigger>
-          <TabsTrigger value="onboarding">onboarding (TEMP)</TabsTrigger>
         </TabsList>
       </Tabs>
     </main>
