@@ -197,7 +197,7 @@ export function IntroEmojis({
   const onPressSelectEmojiTopic = (e: string) => {
     setTopic(e)
     // to fix mine (dcj)
-    if (localHonk === -1) { setLocalHonk(0) }
+    if (localHonk < 0) { setLocalHonk(0) }
 
     if (localHonk > 0) {
       // Send userOp to use real $honk if user has balance, otherwise deduct from local
