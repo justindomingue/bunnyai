@@ -118,7 +118,7 @@ export function IntroEmojis({
       const balance = ((await contract.balanceOf((wallet.address)) / 10 ** 18))
       setLocalHonk(balance)
     } catch (e) {
-      console.log({ e })
+      console.error({ e })
     }
   }
   useEffect(() => {
