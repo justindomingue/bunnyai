@@ -111,11 +111,10 @@ export function IntroEmojis({
       console.error('Must have provider and wallet to get balance')
       return
     }
-    const walletAddress = '0x64e17ccd006b5d089bf644e64f9a6e429e75c64c' ?? wallet.address
     const contract = new Contract(BUNNY_TOKEN_ON(ChainId.BASE_MAINNET), BUNNY_TOKEN_ABI, provider)
 
     try {
-      const balance = ((await contract.balanceOf((walletAddress)) / 10 ** 18).toString())
+      const balance = ((await contract.balanceOf((wallet.address)) / 10 ** 18).toString())
       setLocalHonk(balance)
     } catch (e) {
       console.log({ e })
@@ -185,6 +184,8 @@ export function IntroEmojis({
         await embeddedWallet.getEthereumProvider()
       )
       setProvider(customProvider)
+
+      embeddedWallet.switchChain(ChainId.BASE_MAINNET)
 
       // set privy wallet as signer
       const biconomyModule = await ECDSAOwnershipValidationModule.create({
