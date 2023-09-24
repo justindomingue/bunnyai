@@ -31,7 +31,7 @@ import {
   SponsorUserOperationDto,
 } from '@biconomy/paymaster'
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
-import { ethers } from 'ethers'
+import { Contract, ethers } from 'ethers'
 import {
   Dispatch,
   SetStateAction,
@@ -107,6 +107,26 @@ export function IntroEmojis({
     paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL!,
   })
 
+  async function getHonkBalance(tokenAddress: string = '0x981c5b436121c75cf043a622d078988248ef203d',) {
+    if (!provider || !wallet) {
+      console.error('Must have provider and wallet to get balance')
+      return
+    }
+    const contract = new Contract(BUNNY_TOKEN_ON(ChainId.BASE_MAINNET), BUNNY_TOKEN_ABI, provider)
+
+    try {
+      const balance = ((await contract.balanceOf((wallet.address)) / 10 ** 18))
+      setLocalHonk(balance)
+    } catch (e) {
+      console.log({ e })
+    }
+  }
+  useEffect(() => {
+    if (provider && wallet) {
+      getHonkBalance()
+    }
+  }, [provider, wallet])
+
   const sendUserOpToSpend1Honk = async () => {
     console.log('[debug] selected emoji, sendUserOp ', smartAccount, provider)
     if (!smartAccount || !provider) {
@@ -147,13 +167,15 @@ export function IntroEmojis({
     console.log('userOpHash', userOpResponse)
     const { receipt } = await userOpResponse.wait(1)
     console.log('txHash', receipt.transactionHash)
+
+    getHonkBalance()
   }
 
   const connect = async () => {
     try {
       const embeddedWallet = wallets.find(
         (wallet) => wallet.walletClientType === 'privy'
-      )
+      ) ?? wallets[0]
       if (!embeddedWallet) {
         throw new Error('Privy wallet not found')
       }
@@ -163,6 +185,8 @@ export function IntroEmojis({
         await embeddedWallet.getEthereumProvider()
       )
       setProvider(customProvider)
+
+      embeddedWallet.switchChain(ChainId.BASE_MAINNET)
 
       // set privy wallet as signer
       const biconomyModule = await ECDSAOwnershipValidationModule.create({
