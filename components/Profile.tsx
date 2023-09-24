@@ -24,6 +24,7 @@ import {
   SponsorUserOperationDto,
 } from '@biconomy/paymaster'
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
+import { CredentialType, IDKitWidget } from '@worldcoin/idkit'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 import { NounImage } from './ui/NounImage'
@@ -186,13 +187,23 @@ export function Profile() {
           <h3 className="text-2xl text-white">
             verify with WorldID for 100 bonus free $honk
           </h3>
-          <Button
-            onClick={() => {
-              // TODO: WORLDID!!!
-            }}
+          <IDKitWidget
+            app_id={process.env.WORLDCOIN_APP_ID!} // obtained from the Developer Portal
+            action="claim-dollarhonk-0" // this is your action name from the Developer Portal
+            onSuccess={() => {
+              // TODO:
+              console.log('USER HAS ORB SCANNED! GIVE THEM FREE $honk!!')
+            }} // callback when the modal is closed
+            handleVerify={() => {
+              console.log('verifying user with worldID..')
+            }} // optional callback when the proof is received
+            credential_types={[CredentialType.Orb]} // optional, defaults to ['orb']
+            enableTelemetry // optional, defaults to false
           >
-            verify with WorldID™️
-          </Button>
+            {({ open }) => (
+              <Button onClick={open}>verify with WorldID™️</Button>
+            )}
+          </IDKitWidget>
         </div>
 
         <div className="flex flex-col px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50">
