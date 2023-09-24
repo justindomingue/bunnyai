@@ -16,6 +16,7 @@ import {
     PaymasterMode,
 } from '@biconomy/paymaster'
 import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "@biconomy/modules";
+import { BUNNY_TOKEN_ABI, BUNNY_TOKEN_DEPLOYER, BUNNY_TOKEN_ON } from "@/lib/constants";
 
 export let smartAccount: BiconomySmartAccountV2 | null = null;
 
@@ -29,7 +30,7 @@ export function Profile() {
 
     const bundler: IBundler = new Bundler({
         bundlerUrl: process.env.NEXT_PUBLIC_BUNDLER_URL!,
-        chainId: ChainId.BASE_GOERLI_TESTNET,
+        chainId: ChainId.BASE_MAINNET,
         entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
     })
 
@@ -41,44 +42,9 @@ export function Profile() {
         if (!smartAccount || !provider) {
             throw new Error("Provider not found")
         }
-        const contractAddress = "0xB850aD09eC3816588Ca66C5ADf13D053cf0C9C56";
-        const contractABI = [
-            {
-                "inputs": [],
-                "name": "increment",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "number",
-                "outputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "",
-                        "type": "uint256"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
-                        "name": "newNumber",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "setNumber",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            }
-        ];
-        const contract = new ethers.Contract(contractAddress, contractABI, provider);
-        const txn = await contract.populateTransaction.setNumber(1);
+        const contractAddress = BUNNY_TOKEN_ON(ChainId.BASE_MAINNET);
+        const contract = new ethers.Contract(contractAddress, BUNNY_TOKEN_ABI, provider);
+        const txn = await contract.populateTransaction.transfer(BUNNY_TOKEN_DEPLOYER, 1);
         console.log(txn.data);
         const userOp = await smartAccount.buildUserOp([{
             to: contractAddress,
@@ -125,7 +91,7 @@ export function Profile() {
             })
 
             smartAccount = await BiconomySmartAccountV2.create({
-                chainId: ChainId.BASE_GOERLI_TESTNET,
+                chainId: ChainId.BASE_MAINNET,
                 bundler: bundler,
                 paymaster: paymaster,
                 entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
