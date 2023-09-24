@@ -25,20 +25,20 @@ import {
 } from '@biconomy/paymaster'
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
-import Head from 'next/head'
 import { useEffect, useState } from 'react'
+import { NounImage } from './ui/NounImage'
 
 export let smartAccount: BiconomySmartAccountV2 | null = null
 
 export function Profile() {
-  const { ready, login, logout, authenticated, user } = usePrivy()
+  const { logout, user } = usePrivy()
   const { wallets } = useWallets()
   const [wallet, setWallet] = useState<ConnectedWallet | undefined>(undefined)
   const [address, setAddress] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
   const [provider, setProvider] = useState<ethers.providers.Provider | null>(
     null
   )
+  const [showDevInfo, setShwoDevInfo] = useState<boolean>(false)
 
   const bundler: IBundler = new Bundler({
     bundlerUrl: process.env.NEXT_PUBLIC_BUNDLER_URL!,
@@ -51,6 +51,7 @@ export function Profile() {
   })
 
   const sendUserOp = async () => {
+    console.log('[debug] sendUserOp', smartAccount, provider)
     if (!smartAccount || !provider) {
       throw new Error('Provider not found')
     }
@@ -122,7 +123,6 @@ export function Profile() {
       })
       setAddress(await smartAccount.getAccountAddress())
       console.log('smartAccount', smartAccount)
-      setLoading(false)
     } catch (error) {
       console.error(error)
     }
@@ -137,18 +137,59 @@ export function Profile() {
   }, [user])
 
   return (
-    <>
-      <Head>
-        <title>Login · Privy</title>
-      </Head>
-      {!authenticated ? (
-        <Button onClick={login}>Login</Button>
-      ) : (
+    <div
+      className={`flex flex-col gap-8 absolute inset-0 bg-slate-700 transition-all duration-300`}
+    >
+      {/* header */}
+      <div className="flex flex-col gap-5 bg-fuchsia-500 px-6 pt-8 pb-6">
+        <div className="flex flex-row gap-3">
+          <NounImage prompt={wallet?.address} />
+          <div className="flex flex-col">
+            <p className="text-3xl text-white">Explorer Bunny</p>
+            <p className="text-lg text-white text-opacity-50">
+              {wallet?.address.slice(0, 6)}...{wallet?.address.slice(-4)}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-row gap-3">
+          <Button
+            className="w-1/2 bg-green-400"
+            variant="cta"
+            onClick={() => {}}
+          >
+            get $honk
+          </Button>
+          <Button
+            className="w-1/2 bg-slate-500"
+            variant="cta2"
+            onClick={() => {}}
+          >
+            420 $honk
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col px-6 gap-3">
         <Button onClick={logout}>Logout</Button>
-      )}
-      {wallet && <div>Privy wallet Address: {wallet.address}</div>}
-      {smartAccount && <div>Biconomy Smart Account Address: {address}</div>}
-      <Button onClick={sendUserOp}>Send user op</Button>
-    </>
+        <Button
+          onClick={() => {
+            setShwoDevInfo(!showDevInfo)
+          }}
+        >
+          Show/hide dev info
+        </Button>
+        {showDevInfo && wallet && (
+          <div className="flex flex-col gap-3">
+            <p className="text-lg text-white">
+              Privy wallet Address: {wallet.address}
+            </p>
+            <p className="text-lg text-white">
+              Biconomy Smart Account Address: {address}
+            </p>
+            <Button onClick={sendUserOp}>Send test user op</Button>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
