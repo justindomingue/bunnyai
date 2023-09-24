@@ -157,8 +157,8 @@ function Section({ level }: { level: number }) {
 
   if (!topics[level]) return null
 
-  const content = topics.at(-1)?.content.split('/ENDTITLE')[1] ?? topics.at(-1)?.content ?? ''
-  debugger
+  const topic = topics.at(-1)?.content
+  const content = topic?.includes('/ENDTITLE') ? topic.split('/ENDTITLE')[1] : topics.at(-1)?.content ?? ''
   return (
     <div
       className="flex flex-col gap-4 px-8 h-screen w-screen"
