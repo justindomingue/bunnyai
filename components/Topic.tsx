@@ -375,7 +375,7 @@ export function Topic({
         role: 'user',
       })
     }
-  }, [])
+  }, [append, isLoading, topics.length])
 
   const onDeeper = useCallback(() => {
     if (!isLoading) {
@@ -385,7 +385,7 @@ export function Topic({
         role: 'user',
       })
     }
-  }, [])
+  }, [append, isLoading, topics.length])
 
   const [fade, setFade] = useState(false)
   useEffect(() => {
