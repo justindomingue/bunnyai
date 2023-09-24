@@ -16,7 +16,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { NounIcon } from '@/components/ui/NounIcon'
+import { NounImage } from '@/components/ui/NounImage'
 import { fake_messages } from '@/components/fake-messages'
 import { getRandomEmoji } from '@/lib/emoji'
 
@@ -177,7 +177,7 @@ export function Topic({
       >
         {/* header */}
         <div className="flex flex-row justify-between">
-          <NounIcon prompt={topics[0].id} />
+          <NounImage prompt={topics[0].id} />
           <Button>420 $honk</Button>
         </div>
 
