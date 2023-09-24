@@ -1,32 +1,32 @@
-"use client"
+'use client'
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   BUNNY_TOKEN_ABI,
   BUNNY_TOKEN_DEPLOYER,
   BUNNY_TOKEN_ON,
-} from "@/lib/constants"
+} from '@/lib/constants'
 import {
   BiconomySmartAccountV2,
   DEFAULT_ENTRYPOINT_ADDRESS,
-} from "@biconomy/account"
-import { Bundler, IBundler } from "@biconomy/bundler"
-import { ChainId } from "@biconomy/core-types"
+} from '@biconomy/account'
+import { Bundler, IBundler } from '@biconomy/bundler'
+import { ChainId } from '@biconomy/core-types'
 import {
   DEFAULT_ECDSA_OWNERSHIP_MODULE,
   ECDSAOwnershipValidationModule,
-} from "@biconomy/modules"
+} from '@biconomy/modules'
 import {
   BiconomyPaymaster,
   IHybridPaymaster,
   IPaymaster,
   PaymasterMode,
   SponsorUserOperationDto,
-} from "@biconomy/paymaster"
-import { ConnectedWallet, usePrivy, useWallets } from "@privy-io/react-auth"
-import { ethers } from "ethers"
-import Head from "next/head"
-import { useEffect, useState } from "react"
+} from '@biconomy/paymaster'
+import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
+import { ethers } from 'ethers'
+import Head from 'next/head'
+import { useEffect, useState } from 'react'
 
 export let smartAccount: BiconomySmartAccountV2 | null = null
 
@@ -34,7 +34,7 @@ export function Profile() {
   const { ready, login, logout, authenticated, user } = usePrivy()
   const { wallets } = useWallets()
   const [wallet, setWallet] = useState<ConnectedWallet | undefined>(undefined)
-  const [address, setAddress] = useState<string>("")
+  const [address, setAddress] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [provider, setProvider] = useState<ethers.providers.Provider | null>(
     null
@@ -52,7 +52,7 @@ export function Profile() {
 
   const sendUserOp = async () => {
     if (!smartAccount || !provider) {
-      throw new Error("Provider not found")
+      throw new Error('Provider not found')
     }
     const contractAddress = BUNNY_TOKEN_ON(ChainId.BASE_MAINNET)
     const contract = new ethers.Contract(
@@ -77,8 +77,8 @@ export function Profile() {
     let paymasterServiceData: SponsorUserOperationDto = {
       mode: PaymasterMode.SPONSORED,
       smartAccountInfo: {
-        name: "BICONOMY",
-        version: "2.0.0",
+        name: 'BICONOMY',
+        version: '2.0.0',
       },
     }
     const paymasterAndDataResponse =
@@ -86,18 +86,18 @@ export function Profile() {
 
     userOp.paymasterAndData = paymasterAndDataResponse.paymasterAndData
     const userOpResponse = await smartAccount.sendUserOp(userOp)
-    console.log("userOpHash", userOpResponse)
+    console.log('userOpHash', userOpResponse)
     const { receipt } = await userOpResponse.wait(1)
-    console.log("txHash", receipt.transactionHash)
+    console.log('txHash', receipt.transactionHash)
   }
 
   const connect = async () => {
     try {
       const embeddedWallet = wallets.find(
-        (wallet) => wallet.walletClientType === "privy"
+        (wallet) => wallet.walletClientType === 'privy'
       )
       if (!embeddedWallet) {
-        throw new Error("Privy wallet not found")
+        throw new Error('Privy wallet not found')
       }
       setWallet(embeddedWallet)
 
@@ -121,7 +121,7 @@ export function Profile() {
         activeValidationModule: biconomyModule,
       })
       setAddress(await smartAccount.getAccountAddress())
-      console.log("smartAccount", smartAccount)
+      console.log('smartAccount', smartAccount)
       setLoading(false)
     } catch (error) {
       console.error(error)

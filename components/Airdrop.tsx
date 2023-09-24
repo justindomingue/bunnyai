@@ -1,9 +1,9 @@
-"use client"
+'use client'
 
-import "slick-carousel/slick/slick-theme.css"
-import "slick-carousel/slick/slick.css"
+import 'slick-carousel/slick/slick-theme.css'
+import 'slick-carousel/slick/slick.css'
 
-import { NounIcon } from "./ui/NounIcon"
+import { NounIcon } from './ui/NounIcon'
 
 export function Airdrop() {
   return (
@@ -12,7 +12,7 @@ export function Airdrop() {
     >
       {/* header */}
       <div className="flex flex-row justify-between">
-        <NounIcon prompt={"TODO_DEFAULT"} />
+        <NounIcon prompt={'TODO_DEFAULT'} />
       </div>
 
       {/* topic */}

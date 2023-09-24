@@ -1,10 +1,10 @@
-import { ImageData, getNounData } from "@nouns/assets"
-import { buildSVG } from "@nouns/sdk"
-import Image from "next/image"
-import seedrandom from "seedrandom"
-import { Avatar } from "./avatar"
+import { ImageData, getNounData } from '@nouns/assets'
+import { buildSVG } from '@nouns/sdk'
+import Image from 'next/image'
+import seedrandom from 'seedrandom'
+import { Avatar } from './avatar'
 
-const NounIcon = ({ prompt = "happiness", size = 100 }) => {
+const NounIcon = ({ prompt = 'happiness', size = 100 }) => {
   const {
     palette,
     // images

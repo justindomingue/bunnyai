@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import "slick-carousel/slick/slick-theme.css"
-import "slick-carousel/slick/slick.css"
+import 'slick-carousel/slick/slick-theme.css'
+import 'slick-carousel/slick/slick.css'
 
-import { Button } from "@/components/ui/button"
-import { NounIcon } from "./ui/NounIcon"
+import { Button } from '@/components/ui/button'
+import { NounIcon } from './ui/NounIcon'
 
 export function OnboardingLogin({}: {}) {
   const onPressCreateBunny = () => {
@@ -17,7 +17,7 @@ export function OnboardingLogin({}: {}) {
     >
       {/* header */}
       <div className="flex flex-row justify-between">
-        <NounIcon prompt={"TODO_DEFAULT"} />
+        <NounIcon prompt={'TODO_DEFAULT'} />
       </div>
 
       {/* body */}

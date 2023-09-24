@@ -1,19 +1,19 @@
-"use client"
+'use client'
 
-import { darken } from "polished"
-import Slider from "react-slick"
-import "slick-carousel/slick/slick-theme.css"
-import "slick-carousel/slick/slick.css"
+import { darken } from 'polished'
+import Slider from 'react-slick'
+import 'slick-carousel/slick/slick-theme.css'
+import 'slick-carousel/slick/slick.css'
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
   useState,
-} from "react"
-import { NounIcon } from "./ui/NounIcon"
+} from 'react'
+import { NounIcon } from './ui/NounIcon'
 
 const carouselSettings = {
   dots: false,
@@ -57,11 +57,11 @@ export function Topic({
   useEffect(() => {
     const fadein = () => setFade(false)
     const fadeout = () => setFade(true)
-    window.addEventListener("touchstart", fadeout)
-    window.addEventListener("touchend", fadein)
+    window.addEventListener('touchstart', fadeout)
+    window.addEventListener('touchend', fadein)
     return () => {
-      window.removeEventListener("touchstart", fadeout)
-      window.removeEventListener("touchend", fadein)
+      window.removeEventListener('touchstart', fadeout)
+      window.removeEventListener('touchend', fadein)
     }
   })
 
@@ -81,7 +81,7 @@ export function Topic({
 
       <div
         className={`justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300 ${
-          !fade ? "opacity-100" : "opacity-0"
+          !fade ? 'opacity-100' : 'opacity-0'
         }`}
       >
         {/* header */}
@@ -104,7 +104,7 @@ export function Topic({
 
 function Section({ level }: { level: number }) {
   const { topic, onDeeper, onTurn } = useContext(TopicContext)
-  const backgroundColor = darken(level * 0.05, "#FFCD64")
+  const backgroundColor = darken(level * 0.05, '#FFCD64')
 
   if (!topic[level]) return null
 
@@ -114,7 +114,7 @@ function Section({ level }: { level: number }) {
       style={{ backgroundColor }}
     >
       <div className="flex flex-col gap-4 font-bold mt-44">
-        {topic[level][1].split(".").map((t, i) => (
+        {topic[level][1].split('.').map((t, i) => (
           <p key={i} className="text-lg">
             {t}
           </p>
