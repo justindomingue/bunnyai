@@ -108,14 +108,14 @@ export function IntroEmojis({
   })
 
   async function getHonkBalance(tokenAddress: string = '0x981c5b436121c75cf043a622d078988248ef203d',) {
-    if (!provider || !wallet) {
-      console.error('Must have provider and wallet to get balance')
+    if (!provider || !smartAccount) {
+      console.error('Must have provider and smartAccount to get balance')
       return
     }
     const contract = new Contract(BUNNY_TOKEN_ON(ChainId.BASE_MAINNET), BUNNY_TOKEN_ABI, provider)
 
     try {
-      const balance = ((await contract.balanceOf((wallet.address)) / 10 ** 18))
+      const balance = ((await contract.balanceOf((smartAccount.accountAddress)) / 10 ** 18))
       setLocalHonk(balance)
     } catch (e) {
       console.error({ e })
