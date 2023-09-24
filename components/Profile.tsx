@@ -184,7 +184,7 @@ export function Profile() {
 
         <div className="flex flex-col only:px-8 py-4 rounded-[30px] gap-3 bg-slate-50 bg-opacity-50 px-4">
           <h3 className="text-2xl text-white">
-            verify with WorldID for 420 bonus free $honk
+            verify with WorldID for 100 bonus free $honk
           </h3>
           <Button
             onClick={() => {
@@ -218,6 +218,13 @@ export function Profile() {
 
         <div className="flex flex-col px-6 gap-3">
           <Button onClick={logout}>Logout</Button>
+          <Button
+            onClick={() => {
+              window.open(`https://basescan.org/address/${wallet?.address}`)
+            }}
+          >
+            View on BaseScan
+          </Button>
           <Button
             onClick={() => {
               setShowDevInfo(!showDevInfo)
