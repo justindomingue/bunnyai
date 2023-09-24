@@ -38,7 +38,7 @@ export function Profile() {
   const [provider, setProvider] = useState<ethers.providers.Provider | null>(
     null
   )
-  const [showDevInfo, setShwoDevInfo] = useState<boolean>(false)
+  const [showDevInfo, setShowDevInfo] = useState<boolean>(false)
 
   const bundler: IBundler = new Bundler({
     bundlerUrl: process.env.NEXT_PUBLIC_BUNDLER_URL!,
@@ -138,7 +138,7 @@ export function Profile() {
 
   return (
     <div
-      className={`flex flex-col gap-8 absolute inset-0 bg-slate-700 transition-all duration-300`}
+      className={`flex flex-col absolute inset-0 bg-slate-700 transition-all duration-300`}
     >
       {/* header */}
       <div className="flex flex-col gap-5 bg-fuchsia-500 px-6 pt-8 pb-6">
@@ -168,27 +168,74 @@ export function Profile() {
           </Button>
         </div>
       </div>
+      {/* body */}
+      <div className="flex flex-col gap-4 px-4 overflow-auto pt-6 pb-14">
+        <div className="flex flex-col px-8 py-4 rounded-sm gap-3 bg-slate-50 bg-opacity-50">
+          <h3 className="text-2xl text-white">claim 10 free $honk</h3>
+          <Button
+            onClick={() => {
+              // TODO: ADD CLAIM 10 $HONK!!!
+            }}
+          >
+            claim 10 $honk
+          </Button>
+        </div>
 
-      <div className="flex flex-col px-6 gap-3">
-        <Button onClick={logout}>Logout</Button>
-        <Button
-          onClick={() => {
-            setShwoDevInfo(!showDevInfo)
-          }}
-        >
-          Show/hide dev info
-        </Button>
-        {showDevInfo && wallet && (
-          <div className="flex flex-col gap-3">
-            <p className="text-lg text-white">
-              Privy wallet Address: {wallet.address}
+        <div className="flex flex-col only:px-8 py-4 rounded-sm gap-3 bg-slate-50 bg-opacity-50">
+          <h3 className="text-2xl text-white">
+            verify with WorldID for 420 bonus free $honk
+          </h3>
+          <Button
+            onClick={() => {
+              // TODO: WORLDID!!!
+            }}
+          >
+            verify with WorldID™️
+          </Button>
+        </div>
+
+        <div className="flex flex-col px-8 py-4 rounded-sm gap-3 bg-slate-50 bg-opacity-50">
+          <h3 className="text-2xl text-white">buy $honk on uniswap (base)</h3>
+          <Button
+            onClick={() => {
+              // copy to clipboard
+              navigator.clipboard
+                .writeText('0x981c5b436121c75cf043a622d078988248ef203d')
+                .then(() => {
+                  console.log('Text copied to clipboard')
+                })
+                .catch((error) => {
+                  console.error('Failed to copy text to clipboard:', error)
+                })
+            }}
+          >
+            <p className="text-sm">
+              0x981c5b436121c75cf043a622d078988248ef203d
             </p>
-            <p className="text-lg text-white">
-              Biconomy Smart Account Address: {address}
-            </p>
-            <Button onClick={sendUserOp}>Send test user op</Button>
-          </div>
-        )}
+          </Button>
+        </div>
+
+        <div className="flex flex-col px-6 gap-3">
+          <Button onClick={logout}>Logout</Button>
+          <Button
+            onClick={() => {
+              setShowDevInfo(!showDevInfo)
+            }}
+          >
+            Show/hide dev info
+          </Button>
+          {showDevInfo && wallet && (
+            <div className="flex flex-col gap-3">
+              <p className="text-lg text-white">
+                Privy wallet Address: {wallet.address}
+              </p>
+              <p className="text-lg text-white">
+                Biconomy Smart Account Address: {address}
+              </p>
+              <Button onClick={sendUserOp}>Send test user op</Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
