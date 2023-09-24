@@ -82,7 +82,6 @@ export function Topic({
   }))
 
   useEffect(() => {
-    debugger
     append({ id: 'seed', content: INITIAL_PROMPT + topic, role: 'user' })
   }, [])
 
@@ -93,7 +92,6 @@ export function Topic({
   }, [])
   const onDeeper = useCallback(
     () => {
-      debugger
       append({ id: topics.length.toString(), content: 'go deeper', role: 'user' })
     },
     []
@@ -114,8 +112,6 @@ export function Topic({
   if (!topics || !topics.length) return 'Loading...'
 
   console.log({ topics })
-
-  debugger
 
   return (
     <TopicContext.Provider value={{ topics, onDeeper, onTurn, onWeirder }}>
