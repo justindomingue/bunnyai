@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import {
   BUNNY_TOKEN_ABI,
   BUNNY_TOKEN_DEPLOYER,
-  BUNNY_TOKEN_ON,
+  BUNNY_TOKEN_ON, j
 } from '@/lib/constants'
 import { getRandomEmoji } from '@/lib/emoji'
 import {
@@ -31,7 +31,7 @@ import {
   SponsorUserOperationDto,
 } from '@biconomy/paymaster'
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
-import { ethers } from 'ethers'
+import { Contract, ethers } from 'ethers'
 import {
   Dispatch,
   SetStateAction,
@@ -43,6 +43,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import ERC20 from '@/lib/erc20.json'
 
 const INITIAL_PROMPT = `You are a consumer application created by some of the top engineers and designers in the world. Your output is factual, engaging, fun, and entertaining to read. It's concise, but keeps the reader hooked.
 
@@ -80,8 +81,10 @@ let smartAccount: BiconomySmartAccountV2 | null = null
 
 export function IntroEmojis({
   setTopic,
+  setLocalHonk
 }: {
   setTopic: (topic: string) => void
+  setLocalHonk: (honk: string) => void
 }) {
   // TODO: TECH DEBT: all this privy/biconomy userop stuff really should be moved out of this component but its 6:30am fock it we ball
   const { logout, user } = usePrivy()
@@ -102,6 +105,27 @@ export function IntroEmojis({
   const paymaster: IPaymaster = new BiconomyPaymaster({
     paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL!,
   })
+
+  async function getHonkBalance(tokenAddress: string = '0x981c5b436121c75cf043a622d078988248ef203d',) {
+    if (!provider || !wallet) {
+      console.error('Must have provider and wallet to get balance')
+      return
+    }
+    const walletAddress = '0x64e17ccd006b5d089bf644e64f9a6e429e75c64c' ?? wallet.address
+    const contract = new Contract(BUNNY_TOKEN_ON(ChainId.BASE_MAINNET), BUNNY_TOKEN_ABI, provider)
+
+    try {
+      const balance = ((await contract.balanceOf((walletAddress)) / 10 ** 18).toString())
+      setLocalHonk(balance)
+    } catch (e) {
+      console.log({ e })
+    }
+  }
+  useEffect(() => {
+    if (provider && wallet) {
+      getHonkBalance()
+    }
+  }, [provider, wallet])
 
   const sendUserOpToSpend1Honk = async () => {
     console.log('[debug] selected emoji, sendUserOp ', smartAccount, provider)
@@ -143,13 +167,15 @@ export function IntroEmojis({
     console.log('userOpHash', userOpResponse)
     const { receipt } = await userOpResponse.wait(1)
     console.log('txHash', receipt.transactionHash)
+
+    getHonkBalance()
   }
 
   const connect = async () => {
     try {
       const embeddedWallet = wallets.find(
         (wallet) => wallet.walletClientType === 'privy'
-      )
+      ) ?? wallets[0]
       if (!embeddedWallet) {
         throw new Error('Privy wallet not found')
       }
@@ -242,8 +268,8 @@ export function Topics({
   localHonk,
   setLocalHonk,
 }: {
-  localHonk: number
-  setLocalHonk: Dispatch<SetStateAction<number>>
+  localHonk: string
+  setLocalHonk: Dispatch<SetStateAction<string>>
 }) {
   const [topic, setTopic] = useState<string | null>()
 
@@ -276,7 +302,7 @@ export function Topics({
       {topic ? (
         <Topic topic={topic} onTurn={() => setTopic(null)} />
       ) : (
-        <IntroEmojis setTopic={setTopic} />
+        <IntroEmojis setTopic={setTopic} setLocalHonk={setLocalHonk} />
       )}
     </div>
   )
@@ -289,9 +315,9 @@ const TopicContext = createContext<{
   onTurn: () => void
 }>({
   topics: [],
-  onDeeper: () => {},
-  onWeirder: () => {},
-  onTurn: () => {},
+  onDeeper: () => { },
+  onWeirder: () => { },
+  onTurn: () => { },
 })
 
 export function Topic({

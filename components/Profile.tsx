@@ -35,8 +35,8 @@ export function Profile({
   localHonk,
   setLocalHonk,
 }: {
-  localHonk: number
-  setLocalHonk: Dispatch<SetStateAction<number>>
+  localHonk: string
+  setLocalHonk: Dispatch<SetStateAction<string>>
 }) {
   const { logout, user } = usePrivy()
   const { wallets } = useWallets()
@@ -180,7 +180,7 @@ export function Profile({
             className="bg-yellow-300 hover:bg-yellow-400 text-black"
             onClick={() => {
               // TODO: obviously this is janky to do this in local state, need to write to window storage
-              setLocalHonk(honkBalance + 10)
+              setLocalHonk((Number(localHonk) + 10).toString())
             }}
           >
             claim 10 $honk
