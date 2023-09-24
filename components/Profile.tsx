@@ -92,8 +92,7 @@ export function Profile() {
             smartAccountInfo: {
                 name: 'BICONOMY',
                 version: '2.0.0'
-            },
-            calculateGasLimits: true
+            }
         };
         const paymasterAndDataResponse =
             await biconomyPaymaster.getPaymasterAndData(
