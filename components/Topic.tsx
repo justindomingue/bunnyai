@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import {
   BUNNY_TOKEN_ABI,
   BUNNY_TOKEN_DEPLOYER,
-  BUNNY_TOKEN_ON, j
+  BUNNY_TOKEN_ON,
 } from '@/lib/constants'
 import { getRandomEmoji } from '@/lib/emoji'
 import {
@@ -43,7 +43,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import ERC20 from '@/lib/erc20.json'
 
 const INITIAL_PROMPT = `You are a consumer application created by some of the top engineers and designers in the world. Your output is factual, engaging, fun, and entertaining to read. It's concise, but keeps the reader hooked.
 
@@ -84,7 +83,7 @@ export function IntroEmojis({
   setLocalHonk
 }: {
   setTopic: (topic: string) => void
-  setLocalHonk: (honk: string) => void
+  setLocalHonk: (honk: number) => void
 }) {
   // TODO: TECH DEBT: all this privy/biconomy userop stuff really should be moved out of this component but its 6:30am fock it we ball
   const { logout, user } = usePrivy()
@@ -114,7 +113,7 @@ export function IntroEmojis({
     const contract = new Contract(BUNNY_TOKEN_ON(ChainId.BASE_MAINNET), BUNNY_TOKEN_ABI, provider)
 
     try {
-      const balance = ((await contract.balanceOf((wallet.address)) / 10 ** 18).toString())
+      const balance = ((await contract.balanceOf((wallet.address)) / 10 ** 18))
       setLocalHonk(balance)
     } catch (e) {
       console.log({ e })
@@ -269,8 +268,8 @@ export function Topics({
   localHonk,
   setLocalHonk,
 }: {
-  localHonk: string
-  setLocalHonk: Dispatch<SetStateAction<string>>
+  localHonk: number
+  setLocalHonk: Dispatch<SetStateAction<number>>
 }) {
   const [topic, setTopic] = useState<string | null>()
 
