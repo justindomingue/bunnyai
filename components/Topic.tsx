@@ -107,7 +107,11 @@ export function Topic({
   }))
 
   useEffect(() => {
-    append({ id: 'seed', content: INITIAL_PROMPT + topic, role: 'user' })
+    async function m() {
+      await append({ id: 'seed', content: INITIAL_PROMPT + topic, role: 'user' })
+      await append({ id: 'seed', content: 'go deeper', role: 'user' })
+    }
+    m()
   }, [])
 
   const topics = useMemo(() => messages.filter(m => m.role !== 'user'), [messages])
@@ -134,7 +138,7 @@ export function Topic({
     }
   })
 
-  if (!topics || !topics.length) return 'Loading...'
+  if (!topics || topics.length < 2) return 'Loading...'
 
   console.log({ topics })
 
@@ -159,14 +163,6 @@ export function Topic({
           <NounIcon prompt={topics[0].id} />
           <Button>420 $honk</Button>
         </div>
-
-        {/* topic */}
-        <div className="flex flex-col gap-1">
-          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            {topics.at(-1)?.content?.split('/ENDTITLE')[0].slice(0, 40) ?? topics.at(-1)?.content.slice(0, 40)}
-          </h1>
-          <p className="text-md text-muted-foreground">Level {topics.length}</p>
-        </div>
       </div>
     </TopicContext.Provider>
   )
@@ -178,14 +174,23 @@ function Section({ level }: { level: number }) {
 
   if (!topics[level]) return null
 
-  const topic = topics.at(-1)?.content
-  const content = topic?.includes('/ENDTITLE') ? topic.split('/ENDTITLE')[1] : topics.at(-1)?.content ?? ''
+  const topic = topics.at(level)?.content
+  const content = topic?.includes('/ENDTITLE') ? topic.split('/ENDTITLE')[1] : topic ?? ''
   return (
     <div
-      className="flex flex-col gap-4 px-8 h-screen w-screen pb-32"
+      className="flex flex-col gap-4 px-8 h-screen w-screen pb-32 pt-32"
       style={{ backgroundColor }}
     >
-      <div className="flex flex-col gap-4 font-bold mt-52 flex-1">
+      {/* topic */}
+      <div className="flex flex-col gap-1">
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+          {topic?.split('/ENDTITLE')[0].slice(0, 40) ?? topic?.slice(0, 40)}
+        </h1>
+        <p className="text-md text-muted-foreground">Level {level}</p>
+      </div>
+
+      {/* content */}
+      <div className="flex flex-col gap-4 font-bold flex-1">
         {content.split('.').map((t, i) => (
           <p key={i} className="text-lg">
             {t}

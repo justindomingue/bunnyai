@@ -27,4 +27,7 @@ export async function POST(req: Request) {
 
     // Respond with the stream
     return new StreamingTextResponse(stream)
+
+    // const { choices } = response
+    // return NextResponse.json(choices[0].message)
 }
