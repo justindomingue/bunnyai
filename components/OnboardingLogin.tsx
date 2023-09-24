@@ -17,7 +17,7 @@ import {
 import { BiconomyPaymaster, IPaymaster } from '@biconomy/paymaster'
 import { ConnectedWallet, usePrivy, useWallets } from '@privy-io/react-auth'
 import { ethers } from 'ethers'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NounImage } from './ui/NounImage'
 
 export let smartAccount: BiconomySmartAccountV2 | null = null
@@ -41,6 +41,13 @@ export function OnboardingLogin({}: {}) {
   const paymaster: IPaymaster = new BiconomyPaymaster({
     paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL!,
   })
+
+  // when authenticated, push new screen
+  useEffect(() => {
+    if (authenticated) {
+      // push new screen
+    }
+  }, [authenticated])
 
   const onPressCreateBunny = () => {
     login()
@@ -85,21 +92,23 @@ export function OnboardingLogin({}: {}) {
 
   return (
     <div
-      className={`justify-between flex flex-col gap-8 absolute inset-0 p-8 h-fit transition-all duration-300`}
+      className={`justify-between flex flex-col gap-8 absolute inset-0 p-8 transition-all duration-300`}
     >
       {/* header */}
       <div className="flex flex-row justify-between">
-        <NounImage prompt={'TODO_DEFAULT'} />
+        <NounImage isLogo />
       </div>
 
       {/* body */}
-      <div className="flex flex-col gap-1">
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-          welcome to bunnyAI
+      <div className="flex flex-col gap-5">
+        <h1 className="scroll-m-20 text-6xl font-extrabold tracking-tight lg:text-5xl">
+          welcome to BunnyAI
         </h1>
-        <p className="text-2xl ">🫵 you are about to</p>
-        <p className="text-2xl ">🚀 dive into rabbit holes</p>
-        <p className="text-2xl ">🤯 that will blow your mind</p>
+        <div className="flex flex-col gap-1">
+          <p className="text-2xl ">🫵 you are about to</p>
+          <p className="text-2xl ">🚀 dive into rabbit holes</p>
+          <p className="text-2xl ">🤯 that will blow your mind</p>
+        </div>
       </div>
 
       <div className="flex flex-row  gap-2">
