@@ -4,22 +4,46 @@ import { Airdrop } from '@/components/Airdrop'
 import { OnboardingLogin } from '@/components/OnboardingLogin'
 import { Profile } from '@/components/Profile'
 import { Topics } from '@/components/Topic'
+import { NounImage } from '@/components/ui/NounImage'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { createContext, useState } from 'react'
-
-const AppContext = createContext<{
-  backgroundColor: string
-  setBackgroundColor: () => void,
-}>({
-  backgroundColor: '#ffe7b2',
-  setBackgroundColor: () => { },
-})
+import { usePrivy } from '@privy-io/react-auth'
+import { useState } from 'react'
 
 export default function Home() {
   const [backgroundColor, setBackgroundColor] = useState('#ffe7b2')
+  const { ready, authenticated, user } = usePrivy()
+
+  if (!ready) {
+    return (
+      <main className="flex min-h-screen min-w-screen flex-col items-center justify-center gap-5">
+        <div className="flex flex-row justify-between">
+          <NounImage size={100} />
+        </div>
+
+        {/* body */}
+        <div className="flex flex-col gap-2 items-center">
+          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-foreground">
+            loading...
+          </h1>
+          <p className="text-lg ">$honk $honk</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (!authenticated) {
+    return (
+      <main className="flex min-h-screen min-w-screen flex-col items-center justify-between">
+        <OnboardingLogin />
+      </main>
+    )
+  }
 
   return (
-    <main className="flex min-h-screen min-w-screen flex-col items-center justify-between bg-white" style={{ backgroundColor: backgroundColor }}>
+    <main
+      className="flex min-h-screen min-w-screen flex-col items-center justify-between bg-white"
+      style={{ backgroundColor: backgroundColor }}
+    >
       <Tabs defaultValue="feed" className="flex flex-col flex-1 gap-8">
         <TabsContent value="feed">
           <Topics setBackgroundColor={setBackgroundColor} />
