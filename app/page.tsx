@@ -44,7 +44,6 @@ export default function Home() {
   return (
     <main
       className="flex min-h-screen min-w-screen flex-col items-center justify-between bg-white"
-      style={{ backgroundColor: backgroundColor }}
     >
       <Tabs defaultValue="feed" className="flex flex-col flex-1 gap-8">
         <TabsContent value="feed">

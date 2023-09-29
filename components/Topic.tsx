@@ -1,11 +1,11 @@
 'use client'
 
 import { Message, useChat } from 'ai/react'
-import { darken } from 'polished'
+import { darken, lighten } from 'polished'
 import 'slick-carousel/slick/slick-theme.css'
 import 'slick-carousel/slick/slick.css'
-
-import { NounImage } from '@/components/ui/NounImage'
+import { cn } from '@/lib/utils'
+import { NounImage, generateNounImageSeed, getNounBackgroundColor } from '@/components/ui/NounImage'
 import { Button } from '@/components/ui/button'
 import {
   BUNNY_TOKEN_ABI,
@@ -44,6 +44,8 @@ import {
   useState,
 } from 'react'
 
+import { hex } from 'wcag-contrast'
+
 const INITIAL_PROMPT = `You are a consumer application created by some of the top engineers and designers in the world. Your output is factual, engaging, fun, and entertaining to read. It's concise, but keeps the reader hooked.
 
 Give me a "rabbit hole" that someone could go down. A rabbit hole is a topic that would be interesting to the average person and make them say, "oh wow I didn't know that!" and want to tell people about it immediately. These could be about pretty much anything, as long as they are factually and historically accurate and don't discuss any topics that would be considered controversial or for which the science is not settled. Don't use any topics that you aren't completely sure about. However, these topics should each connect to something that anyone who's a little bit curious would want to know more about.
@@ -79,10 +81,12 @@ const carouselSettings = {
 let smartAccount: BiconomySmartAccountV2 | null = null
 
 export function IntroEmojis({
+  backgroundColor,
   setTopic,
   localHonk,
   setLocalHonk,
 }: {
+  backgroundColor: string,
   setTopic: (topic: string) => void
   localHonk: number
   setLocalHonk: Dispatch<SetStateAction<number>>
@@ -244,11 +248,10 @@ export function IntroEmojis({
   }, [])
   return (
     <div className="flex flex-col">
-      <h1 className="text-4xl font-bold mt-4">Pick a rabbit hole</h1>
-      <h1 className="text-xl text-slate-600 text-opacity-50 mb-7">
+      <h1 className="text-4xl font-bold mt-0 text-left">Pick a rabbit hole</h1>
+      <h2 className="text-xl text-slate-600 text-opacity-50 mb-7">
         costs 1 $honk
-      </h1>
-
+      </h2>
       <div
         className="items-center justify-center w-full grid gap-4"
         style={{
@@ -261,7 +264,7 @@ export function IntroEmojis({
           return (
             <button
               key={i}
-              className="aspect-square rounded-full border-4 border-black/70 bg-black/70 hover:bg-black/80 transition-all duration-200 grid items-center justify-center text-7xl text-center w-[160px] h-[160px] shadow-xl"
+              className="aspect-square rounded-full bg-black hover:bg-black/90 transition-all duration-200 grid items-center justify-center text-7xl text-center w-[140px] h-[140px] shadow-xl"
               onClick={() => onPressSelectEmojiTopic(e)}
             >
               {e}
@@ -286,38 +289,52 @@ export function Topics({
   const honkBalance = localHonk
 
   /* should probably use nest router */
+  const nounImageSeed = generateNounImageSeed(topic ?? 'rabbit hole')
+
+  // console.log('getNounsColors(nounImageSeed)')
+  // console.log(getNounBackgroundColor(nounImageSeed))
+  const color = getNounBackgroundColor(nounImageSeed)
+
+  const backgroundColor = lighten(0.09, color)
+
   return (
-    <div className="justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300">
-      {/* header */}
-      <div className="flex flex-row items-center justify-between">
-        <div className="flex flex-row gap-2 items-center justify-center">
-          <NounImage prompt={topic ?? undefined} />
-          <div className="relative flex">
-            <p className="text-5xl text-muted-foreground">
-              {Array(1).fill(topic).join('   ')}
-            </p>
-            {!!topic ? (
-              <Button
-                className="absolute -top-3 -right-7 w-8 h-8 bg-gray-500/20 flex items-center justify-center text-sm text-gray-500 border border-gray-200"
-                onClick={() => setTopic(null)}
-              >
-                {'✖'}
-              </Button>
-            ) : null}
+    <>
+      <div className='absolute inset-0' style={{ backgroundColor: backgroundColor, zIndex: 0 }} />
+      <div className="justify-between flex flex-col gap-6 absolute inset-0 p-8 h-fit transition-all duration-300">
+        {/* header */}
+        <div className="flex flex-row items-center justify-between">
+          <div className="flex flex-row gap-6 items-center justify-between">
+            <div className="flex items-center justify-center rounded-full border-2 border-black/20">
+              <NounImage nounImageSeed={nounImageSeed} />
+            </div>
+            <div className="relative flex">
+              <p className="text-4xl text-muted-foreground">
+                {Array(1).fill(topic).join('   ')}
+              </p>
+              {!!topic ? (
+                <Button
+                  className="absolute -top-3 -right-7 w-7 h-7 bg-gray-500/20 flex items-center justify-center text-sm text-gray-500"
+                  onClick={() => setTopic(null)}
+                >
+                  {'✖'}
+                </Button>
+              ) : null}
+            </div>
           </div>
+          <Button className="bg-green-400 flex items-center justify-center text-xl px-5 py-2 text-white border border-gray-200">{`${honkBalance} $honk`}</Button>
         </div>
-        <Button className="bg-green-400 flex items-center justify-center text-xl px-5 py-2 text-white border border-gray-200">{`${honkBalance} $honk`}</Button>
+        {topic ? (
+          <Topic topic={topic} onTurn={() => setTopic(null)} color={color} backgroundColor={backgroundColor} />
+        ) : (
+          <IntroEmojis
+            backgroundColor={backgroundColor}
+            setTopic={setTopic}
+            localHonk={localHonk}
+            setLocalHonk={setLocalHonk}
+          />
+        )}
       </div>
-      {topic ? (
-        <Topic topic={topic} onTurn={() => setTopic(null)} />
-      ) : (
-        <IntroEmojis
-          setTopic={setTopic}
-          localHonk={localHonk}
-          setLocalHonk={setLocalHonk}
-        />
-      )}
-    </div>
+    </>
   )
 }
 
@@ -336,9 +353,13 @@ const TopicContext = createContext<{
 export function Topic({
   topic,
   onTurn,
+  color,
+  backgroundColor,
 }: {
   topic: string
   onTurn: () => void
+  color: string
+  backgroundColor: string
 }) {
   // useEffect(() => { debugger }, [topic])
   const sliderRef = useRef()
@@ -401,6 +422,8 @@ export function Topic({
 
   if (!topics || !topics.length) return 'Loading...'
 
+  const backgroundColorByLevel = darken((topics.length - 1) * 0.025, color)
+
   return (
     <TopicContext.Provider value={{ topics, onDeeper, onTurn, onWeirder }}>
       {/* <Slider
@@ -413,8 +436,9 @@ export function Topic({
       </Slider> */}
 
       {/* topic */}
-      <div className="flex flex-col gap-1">
-        <Section level={topics.length - 1} />
+      <div className="flex flex-col gap-1 relative">
+        <div className='flex items-center justify-center absolute -top-1 left-7 w-7 h-7 rotate-45' style={{ backgroundColor: backgroundColorByLevel }} />
+        <Section level={topics.length - 1} color={color} />
         <p className="text-sm text-muted-foreground text-center opacity-50">
           Depth: {topics.length}
         </p>
@@ -441,28 +465,36 @@ export function Topic({
   )
 }
 
-function Section({ level }: { level: number }) {
+function Section({ level, color }: { level: number, color: string }) {
   const { topics, onDeeper, onTurn, onWeirder } = useContext(TopicContext)
-  const backgroundColor = darken(level * 0.025, '#ffe7b2')
+  const backgroundColor = darken(level * 0.025, color)
 
   if (!topics[level]) return null
 
-  const topic = topics.at(-1)?.content
-  const content = topic?.includes('/ENDTITLE')
-    ? topic.split('/ENDTITLE')[1]
-    : topics.at(-1)?.content ?? ''
+  const content = topics.at(-1)?.content ?? ''
+
+  const white = shouldBeWhiteText(backgroundColor)
+
   return (
     <div
-      className="flex flex-col gap-4 h-full w-full rounded-tl-none rounded-[40px] px-4 py-2 overflow-scroll border-4 border-black/10"
+      className="flex flex-col gap-4 h-full w-full zrounded-tl-none rounded-[20px] px-5 pb-6 pt-5 overflow-scroll border-z border-black/10 relative"
       style={{ backgroundColor }}
     >
-      <div className="flex flex-col gap-4 mt-1 flex-1 overflow-scroll max-h-[450px]">
+      <div className="flex flex-col gap-4 mt-1 flex-1 overflow-scroll max-h-[375px]">
         {content.split('.').map((t, i) => (
-          <p key={i} className="text-lg">
+          <p key={i} className={cn("text-lg font-light", white ? "text-white" : 'text-black')} style={{ fontWeight: 200 }}>
             {t}
           </p>
         ))}
       </div>
     </div>
   )
+}
+
+
+export function shouldBeWhiteText(backgroundColor: string, contrastThreshold = 2) {
+  if (hex('#FFFFFF', backgroundColor) >= contrastThreshold) {
+    return true
+  }
+  return false
 }
